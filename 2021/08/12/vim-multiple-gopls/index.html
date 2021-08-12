@@ -186,7 +186,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      838 字
+      844 字
     </span>
   
 
@@ -252,7 +252,7 @@
 <ul>
 <li><p>会导致多个插件有多个 gopls sever daemon 进程，即使加上 <code>-remote=auto</code> 多个插件并不会共享同一个 gopls 进程，因为插件使用的 TMPDIR 目录不一样。</p>
 </li>
-<li><p>在开发过程中，使用代码自动补全时会出现多余的重复选项，这个问题我是后来才发现的，当不添加 <code>languageserver</code> 的配置时不会有重复的选项。</p>
+<li><p>在开发过程中，使用代码自动补全时会出现多余的重复选项(如图03)，这个问题我是后来才发现的，当不添加 <code>languageserver</code> 的配置时不会有重复的选项（如图04）。</p>
 <p><img src="/2021/08/12/vim-multiple-gopls/gopls/gopls03.png" srcset="/img/loading.gif" alt="gp03"> <img src="/2021/08/12/vim-multiple-gopls/gopls/gopls04.png" srcset="/img/loading.gif" alt="gp04"></p>
 </li>
 </ul>
