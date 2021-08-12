@@ -179,6 +179,58 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/08/12/vim-2021-08-12-vim-multiple-gopls/">vim multiple gopls</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/08/12/vim-2021-08-12-vim-multiple-gopls/">
+          
+          
+            
+          
+          多个 gopls daemon 导致内存耗尽问题及现象在 vim 中打开大项目（比如 kubernetes）时会导致系统内存被耗尽，最终导致整台电脑死机。其根本的原因是 vim 中配置的各种插件（比如 vim-go、coc.nvim、coc-go、ycm等）都会各自启动一个 gopls serve daemon 进程，如下图所示：
+
+每个 gopls serve daemon 进程都会消耗 2-4
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-08-12 09:09" pubdate>
+              2021-08-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/vim/">vim</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/vim/">vim</a>
+            
+              <a href="/tags/vim-plugin/">vim-plugin</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/08/09/descheduler/">Descheduler</a>
       </h1>
 
@@ -225,9 +277,9 @@ RemovePodsViolatingInterPodAntiAffi
             
               <a href="/tags/descheduler/">descheduler</a>
             
-              <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
-            
               <a href="/tags/kubernetes/">kubernetes</a>
+            
+              <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
             
           </div>
         
