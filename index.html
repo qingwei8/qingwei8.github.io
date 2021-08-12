@@ -179,18 +179,20 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/08/12/vim-2021-08-12-vim-multiple-gopls/">vim multiple gopls</a>
+        <a href="/2021/08/12/vim-multiple-gopls/">vim multiple gopls</a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/08/12/vim-2021-08-12-vim-multiple-gopls/">
+        <a href="/2021/08/12/vim-multiple-gopls/">
           
           
             
           
           多个 gopls daemon 导致内存耗尽问题及现象在 vim 中打开大项目（比如 kubernetes）时会导致系统内存被耗尽，最终导致整台电脑死机。其根本的原因是 vim 中配置的各种插件（比如 vim-go、coc.nvim、coc-go、ycm等）都会各自启动一个 gopls serve daemon 进程，如下图所示：
 
-每个 gopls serve daemon 进程都会消耗 2-4
+
+
+每个 gopls serve daemon 进程都会消耗 2
         </a>
       </p>
 
