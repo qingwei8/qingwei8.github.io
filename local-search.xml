@@ -4,7 +4,7 @@
   
   
   <entry>
-    <title>page</title>
+    <title>Client-go Informer 机制源码剖析（一）</title>
     <link href="/2021/09/01/client-go-informer-v1-22-01/"/>
     <url>/2021/09/01/client-go-informer-v1-22-01/</url>
     
@@ -13,7 +13,11 @@
     
     <categories>
       
-      <category>kubernetes - client-go - informer</category>
+      <category>kubernetes</category>
+      
+      <category>client-go</category>
+      
+      <category>informer</category>
       
     </categories>
     
