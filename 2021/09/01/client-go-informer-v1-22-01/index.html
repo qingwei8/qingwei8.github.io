@@ -1,0 +1,673 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  
+    
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="目前从事于互联网云原生、kubernetes、serverless、docker、微服务方向的研发工作。">
+  <meta name="author" content="qingwei">
+  <meta name="keywords" content="kubernetes,docker,serverless,微服务,原云生,informer,client-go,kubernetes - client-go - informer">
+  <title>page - Qingwei的博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.7.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.8.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"onlypost":false,"loading_img":"/img/loading.gif","offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Qingwei的博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="page">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-09-01 10:03" pubdate>
+        2021年9月1日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      21
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2">
+      
+    </div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">page</h1>
+            
+            <div class="markdown-body">
+              <h1 id="client-go-informer-机制源码剖析（一）"><a href="#client-go-informer-机制源码剖析（一）" class="headerlink" title="client-go informer 机制源码剖析（一）"></a>client-go informer 机制源码剖析（一）</h1><h2 id="之-Informer-机制简介"><a href="#之-Informer-机制简介" class="headerlink" title="之 Informer 机制简介"></a>之 Informer 机制简介</h2><blockquote>
+<p>本文档基于 <code>v1.22</code> 版本</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="什么是-informer"><a href="#什么是-informer" class="headerlink" title="什么是 informer"></a>什么是 informer</h2><p>informer 是 client-go 中重要的组件，在 kubernetes 的各个控制器中以及自定义 CRD 的控制器中有着广泛的应用，其主要用途是通过 <code>ListWatch</code> 机制从 K8S APIService 中获取资源信息，并将资源信息实时的同步到本地 cache 中，以减少 k8s 集群对 APIService（及 etcd） 的访问压力。k8s 控制器和 CRD 自定义控制器通过 informer 从本地 cache 中获取资源信息，实现对资源的调谐最终达到用户的期望状态。可以说 informer 机制在 k8s 中以及 crd 控制器中起着举足轻重的地位。</p>
+<h2 id="如何使用-informer"><a href="#如何使用-informer" class="headerlink" title="如何使用 informer"></a>如何使用 informer</h2><p>在了解了 informer 的基本概念及在 k8s 控制器中的地位后，我们要如何来使用 informer 机制呢？</p>
+<ul>
+<li><p>在 k8s 的控制器中 informer 的使用方式可以参考 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/master/cmd/kube-controller-manager/app/controllermanager.go#L221">cmd/kube-controller-manager/app/controllermanager.go</a>。先通过在 <code>CreateControllerContext</code> 中初始化 <code>InformerFactory</code>，再将具体的 informer 注册到 <code>InformerFactory</code> 中 （如 DeploymentInformer），再通过 <code>controllerContext.InformerFactory.Start(controllerContext.Stop)</code> 启动所有已注册的 informer。</p>
+</li>
+<li><p>如在外面编写自定义的 CRD 控制器时，需要获取 k8s 资源（如 pod）或者自定义的资源时，可以通过如下方式启动 informer。<a target="_blank" rel="noopener" href="https://github.com/qingwei8/k8s-study-conding/blob/master/controller-sample/mm.go">代码参考例子</a></p>
+  <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs awk">   ......<br><br>   <span class="hljs-regexp">//</span> 创建 informerFactory<br>   informerFactory := informers.NewSharedInformerFactory(clientset, <span class="hljs-number">30</span>*time.Second)<br>   <br>   <span class="hljs-regexp">//</span> 初始化具体的 informer，将具体的 informer 注册到 informerFactory 中<br>   <span class="hljs-regexp">//</span> factory已经为所有k8s的内置资源对象提供了创建对应informer实例的方法，调用具体informer实例的Lister或Informer方法<br>   <span class="hljs-regexp">//</span> 就完成了将informer注册到factory的过程<br>   podInformer := informerFactory.Core().V1().Pods()<br>   pInformer := podInformer.Informer()  <span class="hljs-regexp">//</span> 会创建 NewSharedIndexInformer<br>pLister := podInformer.Lister()  <span class="hljs-regexp">//</span> 会提供 list 和 get 方法，供外部从 cache 中获取数据<br><br>   <span class="hljs-regexp">//</span> 最终需要使用 informerFactory 来启动所有已经注册的 informer<br>   informerFactory.Start(stopCh)<br><br>   <span class="hljs-regexp">//</span> informerFactory 会调用所有已注册的 informer 的 WaitForCacheSync 方法进行同步<br>   <span class="hljs-regexp">//</span> 先启动，再同步<br>   informerFactory.WaitForCacheSync(stopCh)<br>   ......<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>综上所述，要使用 informer 机制来实现资源的实时获取，需要通过下面三步来实现：</p>
+<ul>
+<li><ol>
+<li>初始化 informerFactory。</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>将所需要监听的资源所对应的 Informer 注册到 informerFactory 中去。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>通过启动 informerFactory 来启动所有已经注册的 Informer。</li>
+</ol>
+</li>
+</ul>
+<h2 id="informer-机制详解"><a href="#informer-机制详解" class="headerlink" title="informer 机制详解"></a>informer 机制详解</h2><h3 id="SharedInformerFactory-接口"><a href="#SharedInformerFactory-接口" class="headerlink" title="SharedInformerFactory 接口"></a>SharedInformerFactory 接口</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go">https://github.com/kubernetes/client-go/blob/master/informers/factory.go</a></p>
+</blockquote>
+<p>根据上面 informer 的使用方式，可知道 informer 的入口函数为 <code>NewSharedInformerFactory</code>，首先我们来看看这个函数的具体定义。</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-comment">// 代码位于： client-go/informers/factory.go</span><br><span class="hljs-comment">// NewSharedInformerFactory constructs a new instance of sharedInformerFactory for all namespaces.</span><br>func <span class="hljs-constructor">NewSharedInformerFactory(<span class="hljs-params">client</span> <span class="hljs-params">kubernetes</span>.Interface, <span class="hljs-params">defaultResync</span> <span class="hljs-params">time</span>.Duration)</span> SharedInformerFactory &#123;<br>return <span class="hljs-constructor">NewSharedInformerFactoryWithOptions(<span class="hljs-params">client</span>, <span class="hljs-params">defaultResync</span>)</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>该函数会返回一个 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go#L187">SharedInformerFactory</a> 的 <code>接口</code>。该接口封装了 k8s 内部所有资源的 informer 接口。实现该接口的具体实例为位于同一文件下 <code>sharedInformerFactory</code> 结构体，其中有两个非常关键的方法：<code>Start</code> 和 <code>WaitForCacheSync</code> 函数。</p>
+<ul>
+<li><code>Start</code> 方法：会通过 goroutine 的方式来启动已注册到 informerFactory 中的 informer。每个 informer 都会启动一个 goroutine 来运行 informer 机制，已启动的 informer 不会再启动。</li>
+<li><code>WaitForCacheSync</code> 方法: 会对已注册到 informerFactory 中的且 start 为正常运行状态的 informer 进行同步数据到本地 Cache 中。并设定 informer 的状态为是否已同步完成。</li>
+</ul>
+<p>接下来，再来看看实现 SharedInformerFactory 接口的<strong>结构体实例</strong> <code>sharedInformerFactory</code>。该结构体的定义如下：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> 代码位于：client-go<span class="hljs-regexp">/informers/</span>factory.go<br>type sharedInformerFactory struct &#123;<br>    ......<br>	informers map[reflect.Type]cache.SharedIndexInformer<br>	<span class="hljs-regexp">//</span> startedInformers is used <span class="hljs-keyword">for</span> tracking which informers have been started.<br>	<span class="hljs-regexp">//</span> This allows Start() to be called multiple times safely.<br>	startedInformers map[reflect.Type]bool<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>该结构体中最关键的字段为<code>最后两个字段</code>，由定义可知及上述使用时可知，往 informerFactory 中注册 informer 时其实是将具体的 informer 通过 key-value 的方式写入 informers map 字典中。上述 <code>Start</code> 方法即是将 map 中的 informers 逐一启动。而 <code>WaitForCacheSync</code> 方法是将 <code>startedInformers</code> map 字典中值为 true 的 informers 进行 cache 同步，也即只有 start 正常的 informer 才能进行 cache 同步，且可同步多次。</p>
+<h3 id="注册-informer"><a href="#注册-informer" class="headerlink" title="注册 informer"></a>注册 informer</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/tree/master/informers">https://github.com/kubernetes/client-go/tree/master/informers</a></p>
+</blockquote>
+<p>在定义完 informerFactory 后需要往 factory 中注册具体的 informer（如 <code>PodInformer</code>），通过上一节 <code>sharedInformerFactory</code> 结构体可知，往 factory 中注册 informer 其实就是往 informers map 中添加数据，而 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/tree/master/informers">informers</a> 中定义了 k8s 内部所有资源的具体定义，所有资源按照 group + version 的方式组织文件结构。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-comment">// client-go/informers</span><br>$ tree -L 2<br><span class="hljs-bullet">.</span><br><span class="hljs-bullet"></span><span class="hljs-code">......</span><br><span class="hljs-code">├── apps</span><br><span class="hljs-code">│   ├── interface.go</span><br><span class="hljs-code">│   ├── v1</span><br><span class="hljs-code">│   ├── v1beta1</span><br><span class="hljs-code">│   └── v1beta2</span><br><span class="hljs-code">├── autoscaling</span><br><span class="hljs-code">│   ├── interface.go</span><br><span class="hljs-code">│   ├── v1</span><br><span class="hljs-code">│   ├── v2beta1</span><br><span class="hljs-code">│   └── v2beta2</span><br><span class="hljs-code">├── batch</span><br><span class="hljs-code">│   ├── interface.go</span><br><span class="hljs-code">│   ├── v1</span><br><span class="hljs-code">│   └── v1beta1</span><br><span class="hljs-code">......</span><br></code></pre></td></tr></table></figure>
+<p>如 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/core/v1/pod.go#L37">PodInformer</a> 定义在 <code>client-go/informers/core/v1/pod.go</code> 中，其接口定义如下：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs elm">// client-go/informers/core/v1/pod.go<br><span class="hljs-keyword">type</span> <span class="hljs-type">PodInformer</span> interface &#123;<br>	<span class="hljs-type">Informer</span>() cache.<span class="hljs-type">SharedIndexInformer</span><br>	<span class="hljs-type">Lister</span>() v1.<span class="hljs-type">PodLister</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>PodInformer</code> 接口中定义了两个方法，这两个方法在自定义控制器时会经常用到，是 informer 机制的实现者和使用者。</p>
+<ul>
+<li><code>Informer</code> 方法：该方法法类型为 <code>cache.SharedIndexInformer</code>，是实现 informer 机制的主体，informer 所有相关的逻辑实现都在这里实现，后面会详细介绍该接口的具体实现。</li>
+<li><code>Lister</code> 方法：该方法为用户提供从 cache 中访问数据的方法，<code>Informer</code> 通过 <code>ListWath</code> 会将数据同步到 cache 中，<code>Lister</code> 从 cache 中 get/list 数据。</li>
+</ul>
+<h3 id="SharedInformer-SharedIndexInformer-接口"><a href="#SharedInformer-SharedIndexInformer-接口" class="headerlink" title="SharedInformer/SharedIndexInformer 接口"></a>SharedInformer/SharedIndexInformer 接口</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go">https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go</a></p>
+</blockquote>
+<p>在定义完 informerFactory 后需要往 factory 中注册具体的 informer（如 <code>PodInformer</code>），通过上一节 <code>sharedInformerFactory</code> 结构体可知，往 factory 中注册 informer 其实就是往 informers map 中添加数据，其类型为 <code>cache.SharedIndexInformer</code> 接口。<a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L186">SharedIndexInformer</a> 接口封装了 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L133">SharedInformer</a> 接口，在其基础上添加了 index 索引的相关功能，使查找/增加数据更加快速方便。<br><strong>注意：</strong> <code>SharedInformer</code> 接口中有两个方法非常重要，我们在写 <a target="_blank" rel="noopener" href="https://github.com/qingwei8/k8s-study-conding/blob/master/controller-sample/controller/pod_controller.go">控制器</a> 的时候会经常用到。</p>
+<ul>
+<li><code>AddEventHandler</code> 方法：自定义CRD的控制器从 informer 中获取的数据会通过该函数将资源对象的 key 添加到控制器的工作队列 Workqueue 中，后续控制器会从 Workqueue 中获取 key 对对象进行调谐处理。</li>
+<li><code>HasSynced</code> 方法：定义控制器时，每个具体的 informer start 后，需要对数据进行同步 cache 操作，该方法会以参数的形式传入到每个 informer 的 <code>WaitForCacheSync</code> 中，用来跟踪确保每个 informer 是否完成同步操作。</li>
+</ul>
+<p><code>SharedIndexInformer</code> 接口的具体实现由 <code>sharedIndexInformer</code> 结构体来实现。其结构体定义以及方法的实现都相对比较复杂，我将留在下一节进行详细剖析，简单说就是 <code>sharedIndexInformer</code> 结构体中包含了 <code>listWatch</code>、<code>反射器</code>、<code>deltafifo</code>、<code>controller</code>、<code>indexer</code> 等逻辑的处理。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要介绍了 informer 机制的简单使用，从外部使用者的角度来介绍涉及到的组件，用户只需要通过如下三步即能完美使用 informer 机制，从 cache 中获取 k8s 中的所有资源信息。</p>
+<ul>
+<li><ol>
+<li>初始化 informerFactory。</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>将所需要监听的资源所对应的 Informer 注册到 informerFactory 中去。</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>通过启动 informerFactory 来启动所有已经注册的 Informer。</li>
+</ol>
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/tree/master/informers">https://github.com/kubernetes/client-go/tree/master/informers</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/tree/master/tools/cache">https://github.com/kubernetes/client-go/tree/master/tools/cache</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloudnative.to/blog/client-go-study/">https://cloudnative.to/blog/client-go-study/</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/kubernetes-client-go-informer/">kubernetes - client-go - informer</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/informer/">informer</a>
+                    
+                      <a class="hover-with-bg" href="/tags/client-go/">client-go</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/08/12/vim-multiple-gopls/">
+                        <span class="hidden-mobile">vim multiple gopls</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https://qingwei9.github.io/2021/09/01/client-go-informer-v1-22-01/';
+        this.page.identifier = '/2021/09/01/client-go-informer-v1-22-01/';
+      };
+      Fluid.utils.waitElementVisible('disqus_thread', function () {
+        var d = document, s = d.createElement('script');
+        s.src = '//' + 'fluid' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', new Date());
+        (d.head || d.body).appendChild(s);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the
+      <a target="_blank" href="https://disqus.com/?ref_noscript" rel="nofollow noopener noopener">comments powered by Disqus.</a>
+    </noscript>
+  </div>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+  <div id="bottom">
+  <div id="bottom-drawer" class="bottom-drawer">
+    
+    <div id="toc-mobile">
+      <div class="toc-body" id="toc-body-mobile"></div>
+    </div>
+  </div>
+  <div id="bottom-tab">
+    <a class="sub-menu" onclick="showBottomDrawer(this, '#bottom-drawer .sidebar')">
+      <i class="iconfont"></i> 章节
+    </a>
+    <a class="sub-menu" onclick="showBottomDrawer(this, '#bottom-drawer #toc-mobile')">
+      <i class="iconfont"></i> 目录
+    </a>
+    <a href="#comments" class="sub-menu" onclick="showBottomDrawer(this, '#comments')"> 
+      <i class="iconfont"></i> 评论
+    </a>
+  </div>
+</div>
+
+<script>
+  document.onreadystatechange = function(e) {
+    let drawer = $('#bottom-drawer')
+    if (drawer.height() <= 0) return
+    window.tocbot.init({
+      tocSelector     : '#toc-body-mobile',
+      contentSelector : '.markdown-body',
+      headingSelector : 'h1,h2,h3,h4',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : 20
+    });
+  } 
+  
+  function showBottomDrawer(e, sel){
+    let tab = document.querySelector('#bottom-tab')
+    tab.childNodes.forEach((n) => {
+      if(n != e && n.classList) n.classList.remove("active")
+    })
+    if (sel != "#comments") e.classList.toggle("active")
+
+    let drawer = document.querySelector('#bottom-drawer')
+    let s = document.querySelector(sel)
+    
+    drawer.childNodes.forEach((n) => {
+      if(n != s && n.classList) n.classList.remove("active")
+    })
+    s.classList.toggle("active")
+
+    if (sel == "#comments") {
+      drawer.classList.remove("active")
+      return
+    } 
+
+    if (s.classList.contains("active") && !drawer.classList.contains("active")) {
+      drawer.classList.add("active")
+    }
+
+    if (!s.classList.contains("active") && drawer.classList.contains("active")) {
+      drawer.classList.remove("active")
+    }
+  }
+</script>
+
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+<script>
+  let sidebarBody =  document.querySelector(".sidebar .sidebar-body")
+  let sidebarActive = document.querySelector(".sidebar .is-active-li")
+  let bc = sidebarBody.getBoundingClientRect()
+  let ac = sidebarActive.getBoundingClientRect()
+  let t = ac.y - bc.y - bc.height / 2
+  if (t > 0){
+    sidebarBody.scrollTo({
+      top: t,
+      behavior: 'smooth'
+    })
+  }
+</script>
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>
