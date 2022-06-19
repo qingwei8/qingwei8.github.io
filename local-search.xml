@@ -13,6 +13,10 @@
     
     <categories>
       
+      <category>kubernetes</category>
+      
+      <category>controller</category>
+      
       <category>弹性伸缩</category>
       
       <category>kubernetes</category>
@@ -146,9 +150,7 @@
       
       <category>云原生</category>
       
-      <category>kubernetes</category>
-      
-      <category>descheduler</category>
+      <category>调度器系列</category>
       
     </categories>
     
