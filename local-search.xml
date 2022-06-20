@@ -46,9 +46,9 @@
     
     <categories>
       
-      <category>Kubernetes</category>
+      <category>kubernetes</category>
       
-      <category>kube-Scheduler</category>
+      <category>kube-scheduler</category>
       
       <category>调度器</category>
       
@@ -59,9 +59,9 @@
     
     <tags>
       
-      <tag>kube-scheduler</tag>
+      <tag>scheduler</tag>
       
-      <tag>Kubernetes</tag>
+      <tag>kubernetes</tag>
       
     </tags>
     
@@ -177,9 +177,9 @@
     
     <tags>
       
-      <tag>descheduler</tag>
-      
       <tag>kubernetes</tag>
+      
+      <tag>descheduler</tag>
       
       <tag>云原生</tag>
       
