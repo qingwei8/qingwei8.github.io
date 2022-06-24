@@ -186,7 +186,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      8.6k 字
+      8.8k 字
     </span>
   
 
@@ -196,7 +196,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      102
+      104
        分钟
     </span>
   
@@ -258,7 +258,12 @@
 </tr>
 </tbody></table>
 <p>其中 HPA和 VPA都是从业务负载角度对 pod 数量/资源进行优化的。HPA需要解决的是当业务负载波动变化很大时，HPA controller 会根据业务忙闲情况自动调整副本数量，确保业务的整体的负载达到期望状态以维持负载的平衡稳定，保证服务的可靠性。VPA 主要解决资源配额（Pod的CPU、内存的limit/request）评估不准的问题，业务在运行初期无法确定资源的使用情况，用户往往会申请过多的资源而导致资源的极大浪费，而 VPA 会根据业务的历史资源使用情况来推荐合理的资源请求值，从而使业务的资源申请使用更合理。本文主要详细剖析 hpa 的工作原理。</p>
-<h2 id="2-HPA-架构设计详解"><a href="#2-HPA-架构设计详解" class="headerlink" title="2. HPA 架构设计详解"></a>2. HPA 架构设计详解</h2><p>hpa 的全称是 Horizontal Pod Autoscaler，其主要是通过监控业务的资源利用情况来实现对 pod副本数进行自动水平扩缩容（scale）的机制，也是k8s里使用需求最广泛的一种自动扩缩容机制。其主要架构如下图所示:</p>
+<h2 id="2-HPA-架构设计详解"><a href="#2-HPA-架构设计详解" class="headerlink" title="2. HPA 架构设计详解"></a>2. HPA 架构设计详解</h2><p>hpa 的全称是 Horizontal Pod Autoscaler，其主要是通过监控业务的资源利用情况来实现对 pod副本数进行自动水平扩缩容（scale）的机制，也是k8s里使用需求最广泛的一种自动扩缩容机制。hpa 的实现原理可以简单的理解为两个部分：</p>
+<ul>
+<li><strong>数据采集：</strong> 即监控指标的采集，HPA 通过 metrcis-server（支持 custom/external metrics server 用户自定义方式采集）从 kubelet 中获取 node/pod 的监控指标，并通过 k8s apiserver 向外部暴露 api 接口。 </li>
+<li><strong>自动扩缩容：</strong> hpa 控制器通过 k8s apiserver 暴露出来的 api 接口获取到监控指标数据并计算出期望副本数，同时 hpa 控制器还会通过一系列算法和约束条件调整期望副本数，保证 hpa 扩缩容的稳定性。hpa 在得到期望副本数后会修改关联对象（如 deployment）子资源的 scale 副本数，然后通过关联对象（如 deployment）来实现对 pod 的自动扩<br>缩容。</li>
+</ul>
+<p>其主要架构如下图所示:</p>
 <p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa.png" srcset="/img/loading.gif" alt="hpa"></p>
 <p>如上图可知，其主要组件包括 hpa controller（核心组件）, scaleTargetRef, apiserver， custom metrics server（核心组件）, prometheus-server, prometheus-adapter 等。</p>
 <h3 id="2-1-hpa-controller"><a href="#2-1-hpa-controller" class="headerlink" title="2.1. hpa controller"></a>2.1. hpa controller</h3><p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L573">hpa controller</a> 主要处理 hpa 对象的业务逻辑，hpa 控制器会定期（可在 kube-controller-manager 通过 –horizontal-pod-autoscaler-sync-period 配置，默认 15s）reconcile 每个 HPA对像，通过定期检查业务的监控指标来触发扩缩容操作。reconcile 逻辑主要是：</p>
@@ -477,7 +482,7 @@
 <li>Metrics 用来指定扩缩容指标，是一个切片类型，可以指定多个metric，目前每个 metric 支持的类型主要要五种：Resource、ContainerResource、Pods、Object、External 类型，每种类型的使用场景和值类型也不一样，其计算 metrics指标的聚合数据方法也是不一样的，前面 4种类型使用于 k8s 内部资源指标，External 使用于 k8s 外部资源指标。</li>
 <li>Behavior 字段用来指定 hpa 扩缩容速率，其包含三个字段：StabilizationWindowSeconds、SelectPolicy、Policies。StabilizationWindowSeconds 字段用来实现稳定窗口，目的是确保在 metrics 数据异常或者流量激增的情况下可保证服务的稳定性，特别是缩容场景中。SelectPolicy 和 Policies 结合使用，用来确定扩缩容的速率以及方向或者禁用扩缩容。</li>
 </ul>
-<p>最后详细介绍了 hpa 逻辑中涉及到的一些算法和约束，如缩容冷却机制，desiredReplicas 规范化，稳定窗口机制，扩缩容速率约束等算法。通过这些算法，从总体上实现了 k8s hpa 扩缩容的基本原则：**”快速扩容，谨慎缩容”**。</p>
+<p>最后详细介绍了 hpa 逻辑中涉及到的一些算法和约束，如缩容冷却机制，desiredReplicas 规范化，稳定窗口机制，扩缩容速率约束等算法。通过这些算法，从总体上实现了 k8s hpa 扩缩容的基本原则：<strong>快速扩容，谨慎缩容</strong>。</p>
 <h2 id="6-参考"><a href="#6-参考" class="headerlink" title="6. 参考"></a>6. 参考</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go">https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go</a></li>
 <li><a target="_blank" rel="noopener" href="https://granulate.io/kubernetes-autoscaling-the-hpa/">https://granulate.io/kubernetes-autoscaling-the-hpa/</a></li>
