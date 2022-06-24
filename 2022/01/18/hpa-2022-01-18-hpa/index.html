@@ -261,7 +261,7 @@
 <h2 id="2-HPA-架构设计详解"><a href="#2-HPA-架构设计详解" class="headerlink" title="2. HPA 架构设计详解"></a>2. HPA 架构设计详解</h2><p>hpa 的全称是 Horizontal Pod Autoscaler，其主要是通过监控业务的资源利用情况来实现对 pod副本数进行自动水平扩缩容（scale）的机制，也是k8s里使用需求最广泛的一种自动扩缩容机制。hpa 的实现原理可以简单的理解为两个部分：</p>
 <ul>
 <li><strong>数据采集：</strong> 即监控指标的采集，HPA 通过 metrcis-server（支持 custom/external metrics server 用户自定义方式采集）从 kubelet 中获取 node/pod 的监控指标，并通过 k8s apiserver 向外部暴露 api 接口。 </li>
-<li><strong>自动扩缩容：</strong> hpa 控制器通过 k8s apiserver 暴露出来的 api 接口获取到监控指标数据并计算出期望副本数，同时 hpa 控制器还会通过一系列算法和约束条件调整期望副本数，保证 hpa 扩缩容的稳定性。hpa 在得到期望副本数后会修改关联对象（如 deployment）子资源的 scale 副本数，然后通过关联对象（如 deployment）来实现对 pod 的自动扩<br>缩容。</li>
+<li><strong>自动扩缩容：</strong> hpa 控制器通过 k8s apiserver 暴露出来的 api 接口获取到监控指标数据并计算出期望副本数，同时 hpa 控制器还会通过一系列算法和约束条件调整期望副本数，保证 hpa 扩缩容的稳定性。hpa 在得到期望副本数后会修改关联对象（如 deployment）子资源的 scale 副本数，然后通过关联对象（如 deployment）来实现对 pod 的自动扩缩容。</li>
 </ul>
 <p>其主要架构如下图所示:</p>
 <p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa.png" srcset="/img/loading.gif" alt="hpa"></p>
