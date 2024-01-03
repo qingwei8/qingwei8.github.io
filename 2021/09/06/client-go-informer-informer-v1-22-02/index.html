@@ -1,0 +1,919 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="qingwei">
+  <meta name="keywords" content="kubernetes,docker,serverless,微服务,原云生">
+  
+    <meta name="description" content="client-go informer 机制源码剖析（二）之 sharedIndexInformer 具体实现 本文档基于 v1.22 版本  1. Informer 机制回顾我们在 client-go informer 机制源码剖析（一） 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程： 1NewSharedInformerFactor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="client-go Informer 机制源码剖析（二）">
+<meta property="og:url" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/index.html">
+<meta property="og:site_name" content="Qingwei的博客">
+<meta property="og:description" content="client-go informer 机制源码剖析（二）之 sharedIndexInformer 具体实现 本文档基于 v1.22 版本  1. Informer 机制回顾我们在 client-go informer 机制源码剖析（一） 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程： 1NewSharedInformerFactor">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/custom_controller.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/sharedIndexInformer01.png">
+<meta property="article:published_time" content="2021-09-06T02:03:43.000Z">
+<meta property="article:modified_time" content="2024-01-03T10:30:33.280Z">
+<meta property="article:author" content="qingwei">
+<meta property="article:tag" content="informer">
+<meta property="article:tag" content="client-go">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/custom_controller.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>client-go Informer 机制源码剖析（二） - Qingwei的博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Qingwei的博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="client-go Informer 机制源码剖析（二）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-09-06 10:03" pubdate>
+          2021年9月6日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          57 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="kubernetes"
+        id="heading-b76e98af9aaa680979bf5a65b2d5a105" role="tab" data-toggle="collapse" href="#collapse-b76e98af9aaa680979bf5a65b2d5a105"
+        aria-expanded="true"
+      >
+        kubernetes
+        <span class="list-group-count">(5)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-b76e98af9aaa680979bf5a65b2d5a105"
+           role="tabpanel" aria-labelledby="heading-b76e98af9aaa680979bf5a65b2d5a105">
+        
+        
+          
+          
+  <div class="category-post-list">
+    
+    
+  </div>
+
+          
+  
+    
+    
+    
+    <div class="category-sub row nomargin-x">
+      <a class="category-subitem 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="client-go"
+        id="heading-255da7fb6eacb496d1e95b0268c5ff38" role="tab" data-toggle="collapse" href="#collapse-255da7fb6eacb496d1e95b0268c5ff38"
+        aria-expanded="true"
+      >
+        client-go
+        <span class="list-group-count">(2)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-255da7fb6eacb496d1e95b0268c5ff38"
+           role="tabpanel" aria-labelledby="heading-255da7fb6eacb496d1e95b0268c5ff38">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">client-go Informer 机制源码剖析（一）</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">client-go Informer 机制源码剖析（二）</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div class="category-sub row nomargin-x">
+      <a class="category-subitem collapsed
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="controller"
+        id="heading-594c103f2c6e04c3d8ab059f031e0c1a" role="tab" data-toggle="collapse" href="#collapse-594c103f2c6e04c3d8ab059f031e0c1a"
+        aria-expanded="false"
+      >
+        controller
+        <span class="list-group-count">(1)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse " id="collapse-594c103f2c6e04c3d8ab059f031e0c1a"
+           role="tabpanel" aria-labelledby="heading-594c103f2c6e04c3d8ab059f031e0c1a">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Kubernetes 弹性伸缩之 HPA 原理详解</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div class="category-sub row nomargin-x">
+      <a class="category-subitem collapsed
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="kube-scheduler"
+        id="heading-81e0da1d45d48cb04172d7ca06e7effc" role="tab" data-toggle="collapse" href="#collapse-81e0da1d45d48cb04172d7ca06e7effc"
+        aria-expanded="false"
+      >
+        kube-scheduler
+        <span class="list-group-count">(2)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse " id="collapse-81e0da1d45d48cb04172d7ca06e7effc"
+           role="tabpanel" aria-labelledby="heading-81e0da1d45d48cb04172d7ca06e7effc">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Kubernetes Scheduler 概述</span>
+        </a>
+      
+    
+      
+      
+        <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">client-go Informer 机制源码剖析（二）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="client-go-informer-机制源码剖析（二）"><a href="#client-go-informer-机制源码剖析（二）" class="headerlink" title="client-go informer 机制源码剖析（二）"></a>client-go informer 机制源码剖析（二）</h1><h2 id="之-sharedIndexInformer-具体实现"><a href="#之-sharedIndexInformer-具体实现" class="headerlink" title="之 sharedIndexInformer 具体实现"></a>之 sharedIndexInformer 具体实现</h2><blockquote>
+<p>本文档基于 <code>v1.22</code> 版本</p>
+</blockquote>
+<h2 id="1-Informer-机制回顾"><a href="#1-Informer-机制回顾" class="headerlink" title="1. Informer 机制回顾"></a>1. Informer 机制回顾</h2><p>我们在 <a href="./informer_v1.22_01.md">client-go informer 机制源码剖析（一）</a> 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livescript">NewSharedInformerFactory<span class="hljs-function"><span class="hljs-params">()</span> --&gt;</span> SharedInformerFactory<span class="hljs-function"><span class="hljs-params">(接口)</span> --&gt;</span> PodInformer<span class="hljs-function"><span class="hljs-params">(具体的 Informer 接口)</span> --&gt;</span> cache.SharedIndexInformer(接口)<br></code></pre></td></tr></table></figure>
+<p>其中 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go#L96">NewSharedInformerFactory()</a> 函数用来构建 informerFactory 工厂函数，会得到包含 k8s 内部所有资源的 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go#L187">SharedInformerFactory</a> 接口，再将具体的的 Informer（如 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/core/v1/pod.go#L37">PodInformer</a>）注册到 informerFactory 中完成 informer 的初始化操作，最后再启动 informerFactory，同步 cache 等。而注册具体 Informer 时其实就是初始化/构建 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L186">cache.SharedIndexInformer</a>，完成 <code>ListWatch</code>、<code>反射器</code>、<code>deltafifo</code>、<code>indexer</code>、<code>controller</code>、<code>processer(回调函数)</code> 等组件的初始化及启动过程。如下给出一张各个组件之间关系的图（注意：图中的 <code>WorkQueue</code> 和 <code>Control loop</code> 先不讲解，后面会讲解自定义控制器时讲到）：</p>
+<p><img src="/2021/09/06/client-go-informer-informer-v1-22-02/custom_controller.png" srcset="/img/loading.gif" lazyload alt="custom_controller"></p>
+<h2 id="2-sharedIndexInformer-详解"><a href="#2-sharedIndexInformer-详解" class="headerlink" title="2. sharedIndexInformer 详解"></a>2. sharedIndexInformer 详解</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go">https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go</a></p>
+</blockquote>
+<h3 id="2-1-sharedIndexInformer-结构体"><a href="#2-1-sharedIndexInformer-结构体" class="headerlink" title="2.1. sharedIndexInformer 结构体"></a>2.1. sharedIndexInformer 结构体</h3><p><code>sharedIndexInformer</code> 实现了 SharedIndexInformer 接口，而 SharedIndexInformer 封装了 SharedInformer 接口，并在其基础上添加了 <code>AddIndexers/GetIndexer</code> 的操作。<a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L287">sharedIndexInformer</a> 包含几个非常重要的组件，如下结构体只显示重要组件：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> client-go<span class="hljs-regexp">/tools/</span>cache/shared_informer.go<br>type sharedIndexInformer struct &#123;<br>	indexer    Indexer   <span class="hljs-regexp">//</span> 本地索引存储，基于 index + threadSafeStore 实现的本地 cache 存储<br>	controller Controller <span class="hljs-regexp">//</span> 用于管理 sharedIndexInformer 中的各个组件，并控制各个组件的正常运行<br>	processor  *sharedProcessor <span class="hljs-regexp">//</span> 回调处理函数，从 fifo 队列中消费（Pop）消息进行处理<br>	listerWatcher ListerWatcher <span class="hljs-regexp">//</span> 反射器通过 listwatch 从 k8s apiserver 的 etcd 中获取数据，并将数据放入 fifo 中<br>    ......<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上面 4个组件在 sharedIndexInformer 中至关重要，后面会专门讲解，这里只做简单介绍，下图简单描述了下 sharedIndexInformer 结构体内 4个重要组件的关心和流程图：<br><img src="/2021/09/06/client-go-informer-informer-v1-22-02/sharedIndexInformer01.png" srcset="/img/loading.gif" lazyload alt="sharedindexinformer01"></p>
+<p>下面将根据流程及上图所示各个模块，从上到下逐一讲解其功能：</p>
+<ul>
+<li><code>listerWatcher</code>: 该组件实现 list-watch 机制，其<code>初始化</code>位置在每个具体的 Informer (如 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/core/v1/pod.go#L60">PodInformer</a>)中，在 controller 中会将其封装在 <code>反射器</code> 中，使反射器具体有 <code>list-watch</code> 的功能。list-watch 通过 k8s apiservice 从 etcd 中获取数据，并将数据放入 deltafifo 队列中。</li>
+<li><code>controller</code>: 会通过一个 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/controller.go#L39">Config</a> 结构体将 <code>deltafifo</code>、<code>listerWatcher</code>、<code>Process</code> 关联起来，并管理各个模块的功能实现对象获取、入队列、从队列消费的整个流程。其中 <code>deltafifo</code> 和 <code>listerWatcher</code> 会用来构造 <code>反射器</code>，并启动一个 goruntine 来运行 <code>反射器</code>。<code>Process</code> 由 <code>controller</code> 的 processLoop() 函数调用，并通过一个死循环来实现从队里中 <code>Pop</code> 数据，并将数据传给回调函数 Process 来进行处理，<strong>注意：该 controller 和我们所说的k8s调谐控制器不一样</strong>。</li>
+<li><code>process</code>: 由 sharedIndexInformer (<a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L527"> HandleDeltas</a>) 来实现，并由 controller 管理调用，controller 通过一个 processLoop（死循环）来不断的从 fifo 队列中 <code>Pop</code> 数据，并将数据回调给 <code>HandleDeltas</code> 函数进行处理。</li>
+<li><code>indexer</code>:  本地索引存储，基于 <code>index + threadSafeStore</code> 实现的本地存储。deltafifo 的底层也是基于 indexer 实现的，HandleDeltas 函数从队列中得到的数据会保存到本地 indexer 中。</li>
+</ul>
+<h3 id="2-2-sharedIndexInformer-重要方法"><a href="#2-2-sharedIndexInformer-重要方法" class="headerlink" title="2.2. sharedIndexInformer 重要方法"></a>2.2. sharedIndexInformer 重要方法</h3><p>sharedIndexInformer 结构实现了 SharedIndexInformer 接口，其中最为重要的是下面几个方法，其中<code>AddEventHandler</code> 和 <code>HasSynced</code> 函数我们在自定义控制器时会经常使用到：</p>
+<ul>
+<li><code>Run</code> 方法：会初始化 informer 相关组件，并启动 controller 来管理各个组件的正常运行，该方法在 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go#L128">informerFactory.Start</a> 中被调用，当启动 informerFactory 时会调用该方法来启动具体的 informer。</li>
+<li><code>HasSynced</code> 方法：用来判断 informer 同步 cache 中数据是否成功，该函数在使用控制器时使用 informer 从cache 中同步数据是会被调用。</li>
+<li><code>AddEventHandler</code> 方法：资源事件处理函数，在初始化 informer 时需要指定 <strong>资源事件回调(处理)函数</strong> <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/controller.go">ResourceEventHandler</a>，该函数定义了从 deltafifo 中取出的 key 经 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L765">processorListener</a> 函数封装后需要以何种方式添加到自定义控制器的 <code>WorkQueue</code> 队列中。</li>
+<li><code>HandleDeltas</code> 方法：是 <code>Process</code> 回调函数的实际执行函数，<code>Process</code> 从 DeltaFifo 队列中 <code>Pop</code> 出的数据最终会回调交给 HandleDeltas 函数进行处理。HandleDeltas 函数主要做两件事情：一是将 pop 出的数据保存到 indexer 中存储；二是将 pop 出的数据传给 processorListener 处理函数进行分发，最中会调用 <code>AddEventHandler</code> 中定义的函数将 <code>key</code> 添加到控制器的 <code>WorkQueue</code> 队列中。</li>
+</ul>
+<p>下面详细讲解几个重要的方法。</p>
+<h4 id="2-2-1-sharedIndexInformer-Run-方法"><a href="#2-2-1-sharedIndexInformer-Run-方法" class="headerlink" title="2.2.1. sharedIndexInformer.Run 方法"></a>2.2.1. sharedIndexInformer.Run 方法</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L368">https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L368</a></p>
+</blockquote>
+<p>上面已讲到 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L368">sharedIndexInformer.Run</a> 方法的调用在 informerFactory.Start 时会调用该方法来启动具体的 informer 机制。该方法的真正定义是在 <code>client-go/tools/cache/shared_informer.go</code> 文件下定义的。其具体定义实现如下(只展示部分重要代码逻辑)：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// client-go/tools/cache/shared_informer.go</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span> <span class="hljs-title">Run</span><span class="hljs-params">(stopCh &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> utilruntime.HandleCrash()<br><br>    <span class="hljs-comment">// 1. 初始化 Deltafifo，fifo的底层实现是基于 indexer</span><br>	fifo := NewDeltaFIFOWithOptions(DeltaFIFOOptions&#123;<br>		KnownObjects:          s.indexer,<br>		EmitDeltaTypeReplaced: <span class="hljs-literal">true</span>,<br>	&#125;)<br><br>    <span class="hljs-comment">// 2. 通过 Config 结构体将 fifo、listerwatcher、Process 三者传给 controller 进行管理</span><br>	cfg := &amp;Config&#123;<br>		Queue:            fifo,<br>		ListerWatcher:    s.listerWatcher,<br>		Process:          s.HandleDeltas,<br>        ......<br>	&#125;<br><br>    <span class="hljs-comment">// 3. 通过 config 文件 New 了一个 controller</span><br>	<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>        ....<br>		s.controller = New(cfg)<br>	&#125;()<br><br>    .......<br>    <span class="hljs-comment">// 4. 通过一个协程来运行 processor 函数，该函数会对从 deltafifo 队列中取出来的数据进行分发到控制器的 workqueue 中</span><br>	wg.StartWithChannel(processorStopCh, s.processor.run)<br>    ......<br>    <span class="hljs-comment">// 5. 启动 informer 中的 controller，该 controller 和我们所说的k8s调谐控制器不一样</span><br>	s.controller.Run(stopCh)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>该函数主要做 5 件事情：</p>
+<ol>
+<li>初始化 Deltafifo，fifo的底层实现是基于 indexer。</li>
+<li>通过 Config 结构体将 fifo、listerwatcher、Process 三者传给 controller 进行管理。</li>
+<li>通过 config 文件 New 了一个 controller。</li>
+<li>通过一个协程来运行 processor 函数，该函数会对从 deltafifo 队列中取出来的数据进行分发到控制器的 workqueue 中。</li>
+<li>启动 informer 中的 controller，该 controller 和我们所说的k8s调谐控制器不一样。</li>
+</ol>
+<h4 id="2-2-2-sharedIndexInformer-HandleDeltas-方法"><a href="#2-2-2-sharedIndexInformer-HandleDeltas-方法" class="headerlink" title="2.2.2. sharedIndexInformer.HandleDeltas 方法"></a>2.2.2. sharedIndexInformer.HandleDeltas 方法</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L527">https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L527</a></p>
+</blockquote>
+<p>上面已提到 <code>HandleDeltas</code> 方法是 <code>Process</code> 回调函数的实际执行函数，<code>Process</code> 从 DeltaFifo 队列中 <code>Pop</code> 出的数据最终会回调交给 HandleDeltas 函数进行处理。HandleDeltas 函数主要做两件事情：一是将 pop 出的数据保存到 indexer 中存储；二是将 pop 出的数据传给 processorListener 处理函数进行分发，最中会调用 <code>AddEventHandler</code> 中定义的函数将 <code>key</code> 添加到控制器的 <code>WorkQueue</code> 队列中。其具体定义如下所示（只显示重要代码）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// client-go/tools/cache/shared_informer.go</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *sharedIndexInformer)</span> <span class="hljs-title">HandleDeltas</span><span class="hljs-params">(obj <span class="hljs-keyword">interface</span>&#123;&#125;)</span> <span class="hljs-title">error</span></span> &#123;<br>	s.blockDeltas.Lock()<br>	<span class="hljs-keyword">defer</span> s.blockDeltas.Unlock()<br><br>	<span class="hljs-comment">// from oldest to newest</span><br>	<span class="hljs-keyword">for</span> _, d := <span class="hljs-keyword">range</span> obj.(Deltas) &#123;<br>		<span class="hljs-keyword">switch</span> d.Type &#123;<br>		<span class="hljs-keyword">case</span> Sync, Replaced, Added, Updated:<br>			s.cacheMutationDetector.AddObject(d.Object)<br>			<span class="hljs-keyword">if</span> old, exists, err := s.indexer.Get(d.Object); err == <span class="hljs-literal">nil</span> &amp;&amp; exists &#123;<br>				<span class="hljs-keyword">if</span> err := s.indexer.Update(d.Object); err != <span class="hljs-literal">nil</span> &#123;<br>					<span class="hljs-keyword">return</span> err<br>				&#125;<br><br>				isSync := <span class="hljs-literal">false</span><br>				<span class="hljs-keyword">switch</span> &#123;<br>				<span class="hljs-keyword">case</span> d.Type == Sync:<br>					<span class="hljs-comment">// Sync events are only propagated to listeners that requested resync</span><br>					isSync = <span class="hljs-literal">true</span><br>				<span class="hljs-keyword">case</span> d.Type == Replaced:<br>					<span class="hljs-keyword">if</span> accessor, err := meta.Accessor(d.Object); err == <span class="hljs-literal">nil</span> &#123;<br>						<span class="hljs-keyword">if</span> oldAccessor, err := meta.Accessor(old); err == <span class="hljs-literal">nil</span> &#123;<br>							<span class="hljs-comment">// Replaced events that didn&#x27;t change resourceVersion are treated as resync events</span><br>							<span class="hljs-comment">// and only propagated to listeners that requested resync</span><br>							isSync = accessor.GetResourceVersion() == oldAccessor.GetResourceVersion()<br>						&#125;<br>					&#125;<br>				&#125;<br>				s.processor.distribute(updateNotification&#123;oldObj: old, newObj: d.Object&#125;, isSync)<br>			&#125; <span class="hljs-keyword">else</span> &#123;<br>				<span class="hljs-keyword">if</span> err := s.indexer.Add(d.Object); err != <span class="hljs-literal">nil</span> &#123;<br>					<span class="hljs-keyword">return</span> err<br>				&#125;<br>				s.processor.distribute(addNotification&#123;newObj: d.Object&#125;, <span class="hljs-literal">false</span>)<br>			&#125;<br>		<span class="hljs-keyword">case</span> Deleted:<br>			<span class="hljs-keyword">if</span> err := s.indexer.Delete(d.Object); err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br>			s.processor.distribute(deleteNotification&#123;oldObj: d.Object&#125;, <span class="hljs-literal">false</span>)<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>根据上面 HandleDeltas 函数的具体实现可知，HandleDeltas 函数主要进行两个操作:</p>
+<ol>
+<li>根据事件的类型对事件执行不同的 index 操作，如 Add/Update/Delete 操作。  </li>
+<li>根据事件的类型先对事件进行封装，然后再对封装后的事件执行 <code>distribute</code> 分发操作。</li>
+</ol>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><p>本文主要讲述了 sharedIndexInformer 结构体中 4个非常重要的组件并简单介绍了其功能，分别是 <code>listerWatcher</code>、<code>controller</code>、<code>process</code>、<code>indexer</code> 4个主要成员。其中 <code>controller</code> 又通过 Config 组件来关联 <code>fifo</code>、<code>listerwatcher</code>、<code>process</code>，并通过 controller 来管理各组件的功能，使其相互协调完成 informer 机制的整体功能。同时也简单说明了下 <code>反射器</code> 由 <code>listerwatcher</code> 和 <code>deltafifo</code> 两部分组成，这样使得 <code>反射器</code> 具有了 <code>list-watch</code> 的功能，并能不断往 deltafifo 队列中生产数据。随后简单讲述了 sharedIndexInformer 中几个重要的函数 <code>Run</code>、<code>HasSynced</code>、<code>HandleDeltas</code>、<code>AddEventHandler</code>，并对 <code>Run</code> 和 <code>HandleDeltas</code> 函数进行详细了解。后期我将根据 informer 机制的整体工作流程来详细介绍各个组件的组成和具体功能。</p>
+<ul>
+<li>listerwatcher 机制是怎么实现的？</li>
+<li>reflector 反射器是怎么实现的？其主要功能是什么？</li>
+<li>deltafifo 队列是如何实现的，其底层 store 是什么？deltafifo 与 indexer 的关系？</li>
+<li>controller 是如何工作的？</li>
+<li>process 回调函数如何处理从 deltafifo 中 pop 出的数据？processorListener 是什么？它是如何工作的？</li>
+<li>workqueue 是如何工作的？</li>
+</ul>
+<h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go">https://github.com/kubernetes/client-go</a></li>
+</ul>
+<h2 id="5-推荐文章"><a href="#5-推荐文章" class="headerlink" title="5. 推荐文章"></a>5. 推荐文章</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://qingwei8.github.io/2021/09/01/client-go-informer-v1-22-01/#client-go-informer-%E6%9C%BA%E5%88%B6%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90%EF%BC%88%E4%B8%80%EF%BC%89">client-go-informer-机制源码剖析（一）</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/kubernetes/" class="category-chain-item">kubernetes</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/kubernetes/client-go/" class="category-chain-item">client-go</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/informer/">#informer</a>
+      
+        <a href="/tags/client-go/">#client-go</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>client-go Informer 机制源码剖析（二）</div>
+      <div>https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>qingwei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年9月6日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Kubernetes Scheduler 概述</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）">
+                        <span class="hidden-mobile">client-go Informer 机制源码剖析（一）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
+          {
+            id: 'e944744e8c551d4fa1602d3aad796d79'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

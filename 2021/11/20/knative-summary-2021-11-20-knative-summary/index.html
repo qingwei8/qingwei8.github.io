@@ -1,0 +1,876 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="qingwei">
+  <meta name="keywords" content="kubernetes,docker,serverless,微服务,原云生">
+  
+    <meta name="description" content="knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部">
+<meta property="og:type" content="article">
+<meta property="og:title" content="knative serving 概述">
+<meta property="og:url" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/index.html">
+<meta property="og:site_name" content="Qingwei的博客">
+<meta property="og:description" content="knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-summary01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-sumaary02.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-resources01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-scaling01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-from-0.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-up-down.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-to-0.png">
+<meta property="article:published_time" content="2021-11-20T11:01:29.000Z">
+<meta property="article:modified_time" content="2024-01-03T10:15:05.025Z">
+<meta property="article:author" content="qingwei">
+<meta property="article:tag" content="knative">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-summary01.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>knative serving 概述 - Qingwei的博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Qingwei的博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="knative serving 概述"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-20 19:01" pubdate>
+          2021年11月20日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          81 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar category-bar" style="margin-right: -1rem">
+    
+
+
+
+
+
+<div class="category-list">
+  
+  
+    
+    
+    
+    <div class="category row nomargin-x">
+      <a class="category-item 
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="knative"
+        id="heading-13a67e2c6f20d2968433976ae9a19090" role="tab" data-toggle="collapse" href="#collapse-13a67e2c6f20d2968433976ae9a19090"
+        aria-expanded="true"
+      >
+        knative
+        <span class="list-group-count">(1)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse show" id="collapse-13a67e2c6f20d2968433976ae9a19090"
+           role="tabpanel" aria-labelledby="heading-13a67e2c6f20d2968433976ae9a19090">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2021/11/20/knative-summary-2021-11-20-knative-summary/" title="knative serving 概述"
+           class="list-group-item list-group-item-action
+           active">
+          <span class="category-post">knative serving 概述</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+</div>
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">knative serving 概述</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="knative-serving-概述"><a href="#knative-serving-概述" class="headerlink" title="knative serving 概述"></a>knative serving 概述</h1><h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部署和运行的问题。</p>
+<p>用户只需要编写代码（或者函数），以及配置文件（如何build、运行以及访问等声明式信息），然后运行build和deploy就能把应用自动部署到集群（可以是公有云，也可以是私有云）。其他事情交由serverless平台（比如这里的KNative）自动处理的，这些事情包括：</p>
+<ul>
+<li>自动完成代码到容器的构建。</li>
+<li>把应用（或者函数）和特定的事件进行绑定：当事件发生时，自动触发应用（或者函数）。</li>
+<li>网络的路由和流量控制以及灰度发布</li>
+<li>函数的自动伸缩</li>
+</ul>
+<p>和标准化的 FaaS 不同（只运行特定标准的 Function 代码），KNative 期望能够运行所有的 workload: traditional application、function、container。</p>
+<p>knative 建立在 kubernetes 和 istio 平台之上，使用 kubernetes 提供对容器的编排管理能力（deployment、replicaset、和 pods等），以及 istio 提供的网络管理功能（ingress、LB、dynamic route等）。</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-summary01.png" srcset="/img/loading.gif" lazyload alt="s01"></p>
+<p>为了实现 serverless 应用的管理，knative 把整个系统分成了三个部分：</p>
+<ul>
+<li>Build：构建系统，把用户定义的函数和应用 build 成容器镜像。</li>
+<li>Serving：服务系统，用来配置应用的路由、升级策略、自动扩缩容等功能。</li>
+<li>Eventing：事件系统，用来自动完成事件的绑定和触发。</li>
+</ul>
+<p>本文主要介绍下 knative serving 部分。</p>
+<h2 id="2-knative-serving-工作原理"><a href="#2-knative-serving-工作原理" class="headerlink" title="2. knative serving 工作原理"></a>2. knative serving 工作原理</h2><p>knative serving 的核心功能是使用户配置的应用在 kubernetes 中运行起来，并向外提供服务。主要需要实现的功能包括如下：</p>
+<ul>
+<li>自动化启动和销毁容器</li>
+<li>根据名字生成网络访问相关的 service、ingress 等对象</li>
+<li>监控应用的请求，并自动扩缩容</li>
+<li>支持蓝绿发布、回滚功能，方便应用发布流程</li>
+</ul>
+<p>knative serving 功能是基于 kubernetes 和 istio 开发的，它使用 kubernetes 来管理容器（deployment、pod），使用 istio 来管理网络路由（VirtualService、DestinationRule）。而 kubernetes 和 istio 本身的组件和概念非常多，理解和管理起来相对困难，使用起来对用户也不够友好。所以 knative 在此之上基于 k8s CRD 的方式提供了更高一层的抽象，可以如下所示的资源关系图了解 knatvie 工作原理：</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-sumaary02.png" srcset="/img/loading.gif" lazyload alt="s02"></p>
+<ul>
+<li>Service：注意这里 service 不是 kubernetes 中提供服务发现的那个 service，而是 knative 自定义的 CRD，它的全称是 services.serving.knative.dev。单独控制 route 和 configuration 就能实现 serving 的所有功能，但 knative 更推荐使用 Service 来管理，因为它会自动帮你管理 route 和 configuration 中的所有资源。Service 负责管理 workload 的整个生命周期，负责创建相应的 route 和 configuration 资源对象，并通过监听 route、configuration、revision 等资源的变化情况来更新 service 本身。</li>
+<li>Route：knative 定义的 CRD资源，全称是 route.serving.knative.dev。应用的路由规则，也就是进来的流量如何访问应用，对应了 istio的流量管理（VirtualService），route 通过配置多种不同的规则可以实现多版本应用（多个revision）的灰度发布，指定流量分配，动态回滚等功能。</li>
+<li>configuration：knative 定义的 CRD资源，全称是 configuration.serving.knative.dev。应用的最新配置，也就是应用目前期望的状态，维护 kubernetes 的容器的期望数（deployment replicas）。每次应用升级都会更新 configuration，而 knative 也会保留历史版本的记录（图中的 revision），结合 route的流量管理，knative 可以让多个不同的版本共同提供服务，方便蓝绿发布和滚动更新。注意：修改 configuration 将创建新的 revision，而不删除原有的 revision（revision 的删除有 knative gc 来处理）。</li>
+<li>Revision: knative 定义的 CRD资源，全称是 revision.serving.knative.dev。可理解为版本快照，是对工作负荷所做的每个修改的时间点快照。revision 一旦被创建就不会再重新修改（除非删除），每次 configuration 的修改都会对应一个新的revision，每个 revision 都会根据流入的流量自定进行扩缩容操作。</li>
+</ul>
+<h2 id="3-knative-serving-CRD-资源对象"><a href="#3-knative-serving-CRD-资源对象" class="headerlink" title="3. knative serving CRD 资源对象"></a>3. knative serving CRD 资源对象</h2><p>knative 是通过 k8s CRD 的方式建立在 k8s 之上的服务，我们可以根据资源之间的关联关系来做个梳理，如下图所示：</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-resources01.png" srcset="/img/loading.gif" lazyload alt="rs01"></p>
+<ol>
+<li><p>Service 会创建 route、configuration 资源对象。管理 workload 的整个生命周期，在 k8s serving 中其中入口的作用。</p>
+</li>
+<li><p>Route 会创建 ingress，service 资源对象。其中 ingress 是提供域名供外部访问pa，service 可以理解为 VirtualService 也是一个 k8s service 资源，有两点作用：第一是起着占位作用，防止后续与后续service 冲突，第二是关联 ingress，控制流量和管理流量的作用。</p>
+</li>
+<li><p>Configuration 会创建 revision 资源，且会管理多个不同的 revision 版本。</p>
+</li>
+<li><p>Revision 会创建 imageCache、deployment、podAutoscaler 资源对象。</p>
+<ul>
+<li>imageCache 主要是解决冷启动下载镜像慢的问题；</li>
+<li>deployment 是k8s 资源对象，可实现 pod 的滚动升级，revision 通过管理 deployment 来实现扩缩容，刚创建 deployment 时会设定一个初始副本数（可设为0），但是不同版本的revison 对于不同的 deployment；</li>
+<li>podAutoscaler 是 knative中真正控制扩缩容计算的资源对象，如 kpa 会根据并发数进行伸缩对应的 deployment。</li>
+</ul>
+</li>
+<li><p>podAutoscaler 是真正控制扩缩容的资源对象，它会创建 serverlessService(sks) 资源对象。podAutoscaler 也是通过一个控制器来实现的，其代码主要在 Autoscaler 组件中实现，扩缩容时 Autoscaler 会先根据 metrics 从 queue-proxy 中获取监控指标数据，再通过 decider 计算出扩缩容的期望副本数，然后控制器会将期望的副本数通过 <code>patch 的方式</code> 传给 <code>pa.Spec.ScaleTargetRef</code>，最后扩缩容的具体流程是通过 ScaleTargetRef（如 deployment）来实现的。podAutoscaler 在knative 中支持两种方式：kpa 和 hpa:</p>
+<ul>
+<li>kpa 是基于流量的并发请求数来实现的，优点是：可以实现从 0–&gt;1 或 1–&gt;0 的扩缩容方式，缺点是：只支持 rps 模式的扩缩容方式，knative 默认是使用 kpa 方式。</li>
+<li>hpa 是基于 kubernetes 原生 hpa 方式进行扩缩容，优点是：可以支持 cpu/mem 以及用户自定义的方式进行扩缩容，缺点是：不支持从 0–&gt;1 的扩容，因为当 deployment副本数置为0时流量永远进不来，metrics数据永远为0，这时 hpa 是无法通过 metrics 数据来进行扩缩容的。</li>
+</ul>
+</li>
+<li><p>ServerlessService(sks) 是对 k8s service 之上的一个抽象，主要是用来控制数据流是直接流向服务 Revision（实例数不为零），还是经过 Activator（实例数为0）。sks 会创建 privateService、publicService、publicEndpoints 资源对象。<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/702969">参考</a></p>
+<ul>
+<li>privateService 是标准的 k8s service，通过label selector 来筛选对应的deployment产生的Pod，即 svc 对应的 endpoints 由 k8s 自动管控。</li>
+<li>publicService 是不受 k8s 管控的，没有 label selector，不会像 Private service 一样自动生成 endpoints。publicService 对应的 pubilicEndpoints 由 Knative SKS reconciler 来控制的。</li>
+</ul>
+<p> 注意：sks 工作时有两种模式：proxy和 serve。</p>
+<ul>
+<li>proxy 模式： PublicService 后端 endpoints 指向 Activator 对应的pod地址，所有流量都会流经 Activators 处理后再转发到Revision 后端对应的 pod。</li>
+<li>serve 模式： PublicService 后端 endpoints 跟 Private service一样， 所有流量都会直接指向 Revision 后端对应的 pod。</li>
+</ul>
+</li>
+</ol>
+<h2 id="4-knative-serving-组件"><a href="#4-knative-serving-组件" class="headerlink" title="4. knative serving 组件"></a>4. knative serving 组件</h2><p>knative 部署完成后可以在 knative-serving namespace 下看到创建出的组件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sql">$ kubectl <span class="hljs-keyword">get</span> pod <span class="hljs-operator">-</span>n knative<span class="hljs-operator">-</span>serving<br>NAME                                READY   STATUS    RESTARTS   AGE<br>activator<span class="hljs-number">-8</span>bdsjwle879<span class="hljs-operator">-</span>z233d          <span class="hljs-number">2</span><span class="hljs-operator">/</span><span class="hljs-number">2</span>     <span class="hljs-keyword">Running</span>   <span class="hljs-number">0</span>          <span class="hljs-number">2</span>d<br>autoscaler<span class="hljs-operator">-</span>dcff9585622<span class="hljs-operator">-</span>pr998         <span class="hljs-number">2</span><span class="hljs-operator">/</span><span class="hljs-number">2</span>     <span class="hljs-keyword">Running</span>   <span class="hljs-number">1</span>          <span class="hljs-number">2</span>d<br>autoscaler<span class="hljs-operator">-</span>hpa<span class="hljs-number">-584</span>s08ssdd8<span class="hljs-number">-89</span>hjk     <span class="hljs-number">2</span><span class="hljs-operator">/</span><span class="hljs-number">2</span>     <span class="hljs-keyword">Running</span>   <span class="hljs-number">2</span>          <span class="hljs-number">2</span>d<br>controller<span class="hljs-operator">-</span>k98812mf<span class="hljs-number">-89</span>hjhsjds        <span class="hljs-number">2</span><span class="hljs-operator">/</span><span class="hljs-number">2</span>     <span class="hljs-keyword">Running</span>   <span class="hljs-number">0</span>          <span class="hljs-number">2</span>d<br>webhook<span class="hljs-number">-68923</span>ji001<span class="hljs-number">-90</span>xdfs            <span class="hljs-number">2</span><span class="hljs-operator">/</span><span class="hljs-number">2</span>     <span class="hljs-keyword">Running</span>   <span class="hljs-number">5</span>          <span class="hljs-number">2</span>d<br></code></pre></td></tr></table></figure>
+
+<p>serving 共有 6个主要的组件，其中 5个在 knative-serving 这个 namespace 下面，分别为 activator、autoscaler、autoscaler-hpa、controller、webhook 这五个组件；还有一个 queue，运行在每个应用的 pod里，作为 pod 的 sidecar 存在。</p>
+<p><strong>1. Activator：</strong><br> Activator 主要目的是缓存请求和上报请求指标给Autoscaler，主要功能是在冷启动（从零启动）中缓存请求、突发流量过程中对请求进行负载均衡。</p>
+<ul>
+<li><p>knative 冷启动（从零启动）过程：当对某个 Revision 实例从 0-&gt;1 进行冷启动时，流量请求会先经过 Activator 而不是直接到 Revision 的 Pod实例，即当流量从 Ingress 到达 Activator 后会先缓存这些请求，同时 activator 会携带请求指标（请求并发数）去触发 Autoscaler 扩容实例，当 Revision 中的实例 ready 后，Activator 才会将它缓存的请求转发到新的实例中。同时 sks 的模式也从 proxy 模式变为 server 模式。</p>
+</li>
+<li><p>缓存突发流量过程：为了避免已存在 Pod 的流量过载，Activator 还会充当一个负载均衡器的作用。系统会根据不同的情况来决定是否让 Activator 缓冲并转发请求，当一个应用下中有足够多的 Pod实例时，Activator 将不再转发请求，sks 会被置为 serve状态，请求会直接路由到 Revision 中的 pod 中，从而降低转发带来的网络性能开销。但如果应用下的 pod 数量不够时，activator 会根据请求量来决定将流量转发到哪个实例中，且在不超过设置的负载并发量的前提下，activator 会尽量将所有请求平均分发到后端所有Pod上。</p>
+</li>
+</ul>
+<p>注意：上报指标时，Activator 通过 websocket长连接方式实时上报指标给 Autoscaler，这样能在一定程度上缩短冷启动的时间。而在正常的扩缩容场景中 queue-proxy 与 Autoscaler 之间的数据流通方式是，Autoscaler的 metrics 会自动发现应用的Pod，然后到会主动通过 queue-proxy 指定的端口拉取指标。</p>
+<p><strong>2. Autoscaler：</strong></p>
+<p>Autoscaler 主要负责收集来自 Activator/queue-proxy 中的指标数据，然后通过其中的 Kpa 模块进行实时的扩缩容操作。其逻辑上由 metrics Collector、decider、pa 三部分组成：</p>
+<ul>
+<li>metrics Collector: 主要是从 queue-proxy 中收集每个实例的指标，然后对指标数据进行聚合。为了实现扩缩容，Collector会搜集所有应用实例的样本，并将收d到的样本反映到整个集群。</li>
+<li>decider：从 metrics Collector 中获取聚合后的指标数据，并通过一定的约束算法计算出扩缩容期望的副本数，之后将该副本数推荐给 pa。简单的计算公式如下：期望的实例个数 = 系统所需的并发数/每个实例的并发数</li>
+<li>kpa（PodAutoscaler）： kpa 本身是通过 controller 的方式来实现/维护扩缩容操作的，kpa 会从 decider 中拿到期望的副本数，然后通过 patch 的方式对 deployment 进行更新，实现扩缩容操作。注意 kpa 只支持 rps 方式扩缩容，不支持 cpu/mem 方式扩缩容。</li>
+</ul>
+<p>另外，扩缩的实例个数也会受到 Revision 中最大最小实例数的限制。同时 Autoscaler 还会计算当前系统中剩余多少突发请求容量（可扩缩容多少实例）从而决定Activator 是否需要代理转发请求。</p>
+<p><strong>3. Autoscaler-hpa：</strong><br>通过 k8s 原生的 hpa 方式进行扩缩容，支持 cpu/mem 以及用户自定义指标的方式进行扩缩容，但是只支持从 1–&gt;N 的扩容，不支持从 0–&gt;1 的方式进行扩容。</p>
+<p><strong>4. Controller：</strong> 负责对 Service 整个生命周期的管理，通过 informer 机制和控制器模式对 Service、Route、Configuration、Revision、SKS等资源对象进行 CURD 操作，并不断调协使其达到期望状态。</p>
+<p><strong>5. Webhook：</strong><br>主要负责对创建和更新的参数进行校验。</p>
+<p><strong>6. Queue：</strong><br>负载拦截转发给 Pod 的请求，统计 Pod 的请求并发量，并将请求并发量等指标上报给 autoscaler 对应用进行扩缩容。queue-proxy 是一个伴随着用户容器运行的 Sidecar 容器，跟用户容器部署在同一个 Pod 中。发送到应用程序实例的每个请求都首先通queue-proxy。<br>queue-proxy 的主要作用是统计和控制到达业务容器的请求并发量，当对一个 Revision 设置了并发量之后（比如设置了5），queue-proxy 会确保同一时间不会有超过5个请求打到业务容器。当有超过5个请求到来时，queue-proxy会先把请求暂存在自己的队列 queue 里，（这也是为什么名字里有个queue的由来）。queue-proxy 会统计进来的请求量，同时会通过指定端口提供平均并发量和 rps（每秒请求量）给 autoscaler。</p>
+<p>此外 queue-proxy 还有其他的一些功能：</p>
+<ul>
+<li>应用请求数等指标统计</li>
+<li>Pod健康检查（k8s探针）</li>
+<li>代理转发流量</li>
+<li>判断Ingress是否ready需要通过访问queue-proxy实现</li>
+</ul>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhangoic/article/details/104053421">https://blog.csdn.net/zhangoic/article/details/104053421</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/722412">https://developer.aliyun.com/article/722412</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/722193">https://developer.aliyun.com/article/722193</a></li>
+</ul>
+<h2 id="5-knative-serving-扩缩容简介"><a href="#5-knative-serving-扩缩容简介" class="headerlink" title="5. knative serving 扩缩容简介"></a>5. knative serving 扩缩容简介</h2><p>根据上面的介绍，我们知道 knative 中自定义的各种资源，并简单介绍了knative 中主要组件的一些功能，下面将主要介绍 knative 的扩缩容逻辑，knative Serving 模块的核心原理如下图所示，图中的 Route 可以理解成是 Istio Gateway 的角色。</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-scaling01.png" srcset="/img/loading.gif" lazyload alt="scaling01"></p>
+<ul>
+<li>当 pod 数为零进来的流量就会指到 Activator 上面；然后 activator 会触发 autoscaler 扩容实例，最后流量才会从 activator 转发到实例上。</li>
+<li>当 Pod 数不为零时流量就会指到对应的 Pod 上面，此时流量不经过 Activator。knative Serving 会为每个 POD 注入 QUEUE 代理容器 (queue-proxy)，该容器负责向 Autoscaler 报告用户容器的并发指标。Autoscaler 接收到这些指标之后，会根据并发请求数及相应的算法，调整 Deployment 的 POD 数量，从而实现自动扩缩容。</li>
+</ul>
+<p>更详细的扩缩容逻辑如下所示。</p>
+<h3 id="5-1-冷启动（从零开始扩）"><a href="#5-1-冷启动（从零开始扩）" class="headerlink" title="5.1. 冷启动（从零开始扩）"></a>5.1. 冷启动（从零开始扩）</h3><p>冷启动是指当 revision 下的 pod 数量为 0 时 knative 如何实现从 0–&gt;1 的扩容逻辑，其流程可以用如下图所示：</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-from-0.png" srcset="/img/loading.gif" lazyload alt="0-1"></p>
+<p>根据上图可知,如果 Revision的实例数为零时，此时系统中有一个请求试图达到该 Revision，为了正常服务系统需要将扩容。流量的处理流程如下所示：</p>
+<ul>
+<li><p>一方面，流量从 ingress 流入，ingress 会将流量转发到 public Service，但由于此时 sks 为 proxy 模式，public Service 中的 endpoints 保存的是 activator 的 ip 地址，所以流量会流入到 activator(1) 中，activator 会缓存流量并计算并发请求数，随后 activator 会触发 autoscaler(2.1) 进行扩容操作，同时不断 watch(2.2) private Service (k8s 原生 service) 中的 endpoints 数据，一但 endpoints 中有 pod 数据(7)（只有健康检查通过的 pod， 能接入流量的 pod 才能加入到 endpoints 中）activator 会将缓存的流量转发给的 pod 实例(8.2)。</p>
+</li>
+<li><p>另一方面，Autoscaler 收到 Activator 发送的指标后，会立即启动扩容的逻辑，即 metrics 会将抓取到的指标数据交给 decider（3），随后 decider 计算出期望副本数推荐给 kpa（4），kpa 会通过 deployment 来进行扩容（5.1）(6)，同时会将 sks 的模式改成 serve 模式（5.2）。这个过程的得出的结论是：至少一个Pod要被创造出来。Deployment创建 Pod 后会更新 Private service 的 endpoint（7）， sks 控制器监听到 Private service 的变化后会更新 Public service 并使其与 Private service 的 endpoints 保持一致（8.1）。</p>
+</li>
+</ul>
+<p>综上所述，流量先经过 activator 缓存并触发扩缩容等一系列操作后才将流量转发到健康实例上，最终完成 revision 的冷启动扩容。</p>
+<h3 id="5-2-稳定状态正常扩缩容"><a href="#5-2-稳定状态正常扩缩容" class="headerlink" title="5.2. 稳定状态正常扩缩容"></a>5.2. 稳定状态正常扩缩容</h3><p>稳定扩缩容状态是指 knative 如何实现 m–&gt;n (m 和 n 都不能为 0) 扩缩容，如上图可知其（稳定状态）流程如下：</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-up-down.png" srcset="/img/loading.gif" lazyload alt="m-n"></p>
+<p><strong>简单过程可理解为：流量从 ingress 流入，经过 public Service 后直接流向了后端实例上。</strong><br>详细过程如下：<br>流量通过 ingress 路由到 Public service 后 ，此时 Public service 的 endpoints 对应 Revision 后端中的 pods，即流量可直接到达 endpoints 中。在 knative autoscaler 扩缩容逻辑中，Autoscaler 通过 metrics 不断的从 queue-proxy 暴露的端口中抓取指标，通过 decider 模块计算出副本数的推荐值，最后再通过 pa 来不断的修改 revision 中 deployment 并通过 deployment 来不断调协 Revision 中实例。此外 sks 分模式一直是 serve 模式，并会不断监控 Private service 的状态，保持 Public service 的 endpoints 与 Private service 一致。</p>
+<h3 id="5-3-缩容到零"><a href="#5-3-缩容到零" class="headerlink" title="5.3. 缩容到零"></a>5.3. 缩容到零</h3><p>缩容到零是指 knative 如何实现从 1–&gt;0 的缩容逻辑，其流程如下：</p>
+<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-to-0.png" srcset="/img/loading.gif" lazyload alt="1-0"></p>
+<p>在正常的处理逻辑中，Autoscaler 会不断通过 queue-proxy 获取 Revision 实例的请求指标（1），然后根据这些指标数据来决定扩缩容逻辑。而当系统中某个 Revision 不再接收到请求（此时 Activator 和 queue-proxy 收到的请求数都为 0）（2），autoscaler 通过 metrics 从 queue-proxy 中抓取到的指标数据也为 0，此时 Decider 会将推荐值0 交给 pa (3)，随后 pa 会修改 deployment 的副本数为 0（4.2），之后的所容逻辑有 deployment 控制器来控制。而在 knative 需要删掉 Revision 的最后一个Pod之前，会有些特殊处理：</p>
+<ul>
+<li>pa 控制器会将 SKS 变为 proxy 模式（4.1），此时 SKS 的 Public service 后端的 endpoints 变为 Activator 的IP，所有的流量都直接导到 Activator（6.2）中。</li>
+<li>在删除最后一个 pod 之前会设置一个宽限期（可通过_scale-to-zero-grace-period_进行配置），如果在宽限期内依然没有流量到来，则Revision 的最后一个 pod将被删除（5）。</li>
+</ul>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><p>本文主要讲述了 knative serving 是如何实现的，knative serving 是建立在 k8s 之上的服务，通过 crd 的方式来实现其业务逻辑。本文先是介绍了实现 knative 的技术背景，随后介绍了knative 的工作原理以及 crd 相关资源对象，之后简单介绍了 knative 中几个重要组件，knative 的crd 资源通过这些组件的实现来完成 knative 的扩缩容逻辑。最后详细介绍了 knative 的三个特殊的扩缩容逻辑，冷启动扩容、正常扩缩容、缩容到零，其中零启动扩容方式是 knative 技术的一大亮点，但其也存在诸多缺点，其中最大的确实就是冷启动的时间太长（号称冷启动时间为 6s），这在绝大多数应用场景中是不可忍受的，所以对 knative 的性能优化将是社区和行业亟待解决的一个大问题，其中<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/652064">网易</a>对此有个优化实践.</p>
+<h2 id="7-参考"><a href="#7-参考" class="headerlink" title="7. 参考"></a>7. 参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/knative/serving/tree/release-1.5/">https://github.com/knative/serving/tree/release-1.5/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/knative/serving/tree/release-1.5/docs/scaling">https://github.com/knative/serving/tree/release-1.5/docs/scaling</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/353216880">https://zhuanlan.zhihu.com/p/353216880</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/617053">https://cloud.tencent.com/developer/news/617053</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/652064">https://cloud.tencent.com/developer/news/652064</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.tianfeiyu.com/source-code-reading-notes/knative/knative_serving.html">https://blog.tianfeiyu.com/source-code-reading-notes/knative/knative_serving.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhangoic/article/details/104053421">https://blog.csdn.net/zhangoic/article/details/104053421</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/722412">https://developer.aliyun.com/article/722412</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/722193">https://developer.aliyun.com/article/722193</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/172431080">https://zhuanlan.zhihu.com/p/172431080</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/serverless/" class="category-chain-item">serverless</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/serverless/knative/" class="category-chain-item">knative</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/knative/">#knative</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>knative serving 概述</div>
+      <div>https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>qingwei</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月20日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Kubernetes 弹性伸缩之 HPA 原理详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述">
+                        <span class="hidden-mobile">Kubernetes 默认调度器调度策略概述</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="gitalk-container"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#gitalk-container', function() {
+      Fluid.utils.createCssLink('/css/gitalk.css')
+      Fluid.utils.createScript('https://lib.baomitu.com/gitalk/1.7.2/gitalk.min.js', function() {
+        var options = Object.assign(
+          {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
+          {
+            id: '3608b545b740c58b4a47946e3181b83b'
+          }
+        )
+        var gitalk = new Gitalk(options);
+        gitalk.render('gitalk-container');
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
