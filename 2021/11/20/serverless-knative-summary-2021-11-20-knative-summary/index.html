@@ -19,23 +19,23 @@
     <meta name="description" content="knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部">
 <meta property="og:type" content="article">
 <meta property="og:title" content="knative serving 概述">
-<meta property="og:url" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/index.html">
+<meta property="og:url" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-summary01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-sumaary02.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-resources01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-scaling01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-from-0.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-up-down.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-to-0.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-sumaary02.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-resources01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-scaling01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-from-0.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-up-down.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-to-0.png">
 <meta property="article:published_time" content="2021-11-20T11:01:29.000Z">
 <meta property="article:modified_time" content="2024-01-03T10:15:05.025Z">
 <meta property="article:author" content="qingwei">
 <meta property="article:tag" content="knative">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-summary01.png">
+<meta name="twitter:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -304,7 +304,7 @@
     
       
       
-        <a href="/2021/11/20/knative-summary-2021-11-20-knative-summary/" title="knative serving 概述"
+        <a href="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/" title="knative serving 概述"
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">knative serving 概述</span>
@@ -345,7 +345,7 @@
 </ul>
 <p>和标准化的 FaaS 不同（只运行特定标准的 Function 代码），KNative 期望能够运行所有的 workload: traditional application、function、container。</p>
 <p>knative 建立在 kubernetes 和 istio 平台之上，使用 kubernetes 提供对容器的编排管理能力（deployment、replicaset、和 pods等），以及 istio 提供的网络管理功能（ingress、LB、dynamic route等）。</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-summary01.png" srcset="/img/loading.gif" lazyload alt="s01"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png" srcset="/img/loading.gif" lazyload alt="s01"></p>
 <p>为了实现 serverless 应用的管理，knative 把整个系统分成了三个部分：</p>
 <ul>
 <li>Build：构建系统，把用户定义的函数和应用 build 成容器镜像。</li>
@@ -361,7 +361,7 @@
 <li>支持蓝绿发布、回滚功能，方便应用发布流程</li>
 </ul>
 <p>knative serving 功能是基于 kubernetes 和 istio 开发的，它使用 kubernetes 来管理容器（deployment、pod），使用 istio 来管理网络路由（VirtualService、DestinationRule）。而 kubernetes 和 istio 本身的组件和概念非常多，理解和管理起来相对困难，使用起来对用户也不够友好。所以 knative 在此之上基于 k8s CRD 的方式提供了更高一层的抽象，可以如下所示的资源关系图了解 knatvie 工作原理：</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-sumaary02.png" srcset="/img/loading.gif" lazyload alt="s02"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-sumaary02.png" srcset="/img/loading.gif" lazyload alt="s02"></p>
 <ul>
 <li>Service：注意这里 service 不是 kubernetes 中提供服务发现的那个 service，而是 knative 自定义的 CRD，它的全称是 services.serving.knative.dev。单独控制 route 和 configuration 就能实现 serving 的所有功能，但 knative 更推荐使用 Service 来管理，因为它会自动帮你管理 route 和 configuration 中的所有资源。Service 负责管理 workload 的整个生命周期，负责创建相应的 route 和 configuration 资源对象，并通过监听 route、configuration、revision 等资源的变化情况来更新 service 本身。</li>
 <li>Route：knative 定义的 CRD资源，全称是 route.serving.knative.dev。应用的路由规则，也就是进来的流量如何访问应用，对应了 istio的流量管理（VirtualService），route 通过配置多种不同的规则可以实现多版本应用（多个revision）的灰度发布，指定流量分配，动态回滚等功能。</li>
@@ -369,7 +369,7 @@
 <li>Revision: knative 定义的 CRD资源，全称是 revision.serving.knative.dev。可理解为版本快照，是对工作负荷所做的每个修改的时间点快照。revision 一旦被创建就不会再重新修改（除非删除），每次 configuration 的修改都会对应一个新的revision，每个 revision 都会根据流入的流量自定进行扩缩容操作。</li>
 </ul>
 <h2 id="3-knative-serving-CRD-资源对象"><a href="#3-knative-serving-CRD-资源对象" class="headerlink" title="3. knative serving CRD 资源对象"></a>3. knative serving CRD 资源对象</h2><p>knative 是通过 k8s CRD 的方式建立在 k8s 之上的服务，我们可以根据资源之间的关联关系来做个梳理，如下图所示：</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-resources01.png" srcset="/img/loading.gif" lazyload alt="rs01"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-resources01.png" srcset="/img/loading.gif" lazyload alt="rs01"></p>
 <ol>
 <li><p>Service 会创建 route、configuration 资源对象。管理 workload 的整个生命周期，在 k8s serving 中其中入口的作用。</p>
 </li>
@@ -440,14 +440,14 @@
 <li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/722193">https://developer.aliyun.com/article/722193</a></li>
 </ul>
 <h2 id="5-knative-serving-扩缩容简介"><a href="#5-knative-serving-扩缩容简介" class="headerlink" title="5. knative serving 扩缩容简介"></a>5. knative serving 扩缩容简介</h2><p>根据上面的介绍，我们知道 knative 中自定义的各种资源，并简单介绍了knative 中主要组件的一些功能，下面将主要介绍 knative 的扩缩容逻辑，knative Serving 模块的核心原理如下图所示，图中的 Route 可以理解成是 Istio Gateway 的角色。</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/knative-scaling01.png" srcset="/img/loading.gif" lazyload alt="scaling01"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-scaling01.png" srcset="/img/loading.gif" lazyload alt="scaling01"></p>
 <ul>
 <li>当 pod 数为零进来的流量就会指到 Activator 上面；然后 activator 会触发 autoscaler 扩容实例，最后流量才会从 activator 转发到实例上。</li>
 <li>当 Pod 数不为零时流量就会指到对应的 Pod 上面，此时流量不经过 Activator。knative Serving 会为每个 POD 注入 QUEUE 代理容器 (queue-proxy)，该容器负责向 Autoscaler 报告用户容器的并发指标。Autoscaler 接收到这些指标之后，会根据并发请求数及相应的算法，调整 Deployment 的 POD 数量，从而实现自动扩缩容。</li>
 </ul>
 <p>更详细的扩缩容逻辑如下所示。</p>
 <h3 id="5-1-冷启动（从零开始扩）"><a href="#5-1-冷启动（从零开始扩）" class="headerlink" title="5.1. 冷启动（从零开始扩）"></a>5.1. 冷启动（从零开始扩）</h3><p>冷启动是指当 revision 下的 pod 数量为 0 时 knative 如何实现从 0–&gt;1 的扩容逻辑，其流程可以用如下图所示：</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-from-0.png" srcset="/img/loading.gif" lazyload alt="0-1"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-from-0.png" srcset="/img/loading.gif" lazyload alt="0-1"></p>
 <p>根据上图可知,如果 Revision的实例数为零时，此时系统中有一个请求试图达到该 Revision，为了正常服务系统需要将扩容。流量的处理流程如下所示：</p>
 <ul>
 <li><p>一方面，流量从 ingress 流入，ingress 会将流量转发到 public Service，但由于此时 sks 为 proxy 模式，public Service 中的 endpoints 保存的是 activator 的 ip 地址，所以流量会流入到 activator(1) 中，activator 会缓存流量并计算并发请求数，随后 activator 会触发 autoscaler(2.1) 进行扩容操作，同时不断 watch(2.2) private Service (k8s 原生 service) 中的 endpoints 数据，一但 endpoints 中有 pod 数据(7)（只有健康检查通过的 pod， 能接入流量的 pod 才能加入到 endpoints 中）activator 会将缓存的流量转发给的 pod 实例(8.2)。</p>
@@ -457,10 +457,10 @@
 </ul>
 <p>综上所述，流量先经过 activator 缓存并触发扩缩容等一系列操作后才将流量转发到健康实例上，最终完成 revision 的冷启动扩容。</p>
 <h3 id="5-2-稳定状态正常扩缩容"><a href="#5-2-稳定状态正常扩缩容" class="headerlink" title="5.2. 稳定状态正常扩缩容"></a>5.2. 稳定状态正常扩缩容</h3><p>稳定扩缩容状态是指 knative 如何实现 m–&gt;n (m 和 n 都不能为 0) 扩缩容，如上图可知其（稳定状态）流程如下：</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-up-down.png" srcset="/img/loading.gif" lazyload alt="m-n"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-up-down.png" srcset="/img/loading.gif" lazyload alt="m-n"></p>
 <p><strong>简单过程可理解为：流量从 ingress 流入，经过 public Service 后直接流向了后端实例上。</strong><br>详细过程如下：<br>流量通过 ingress 路由到 Public service 后 ，此时 Public service 的 endpoints 对应 Revision 后端中的 pods，即流量可直接到达 endpoints 中。在 knative autoscaler 扩缩容逻辑中，Autoscaler 通过 metrics 不断的从 queue-proxy 暴露的端口中抓取指标，通过 decider 模块计算出副本数的推荐值，最后再通过 pa 来不断的修改 revision 中 deployment 并通过 deployment 来不断调协 Revision 中实例。此外 sks 分模式一直是 serve 模式，并会不断监控 Private service 的状态，保持 Public service 的 endpoints 与 Private service 一致。</p>
 <h3 id="5-3-缩容到零"><a href="#5-3-缩容到零" class="headerlink" title="5.3. 缩容到零"></a>5.3. 缩容到零</h3><p>缩容到零是指 knative 如何实现从 1–&gt;0 的缩容逻辑，其流程如下：</p>
-<p><img src="/2021/11/20/knative-summary-2021-11-20-knative-summary/scale-to-0.png" srcset="/img/loading.gif" lazyload alt="1-0"></p>
+<p><img src="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-to-0.png" srcset="/img/loading.gif" lazyload alt="1-0"></p>
 <p>在正常的处理逻辑中，Autoscaler 会不断通过 queue-proxy 获取 Revision 实例的请求指标（1），然后根据这些指标数据来决定扩缩容逻辑。而当系统中某个 Revision 不再接收到请求（此时 Activator 和 queue-proxy 收到的请求数都为 0）（2），autoscaler 通过 metrics 从 queue-proxy 中抓取到的指标数据也为 0，此时 Decider 会将推荐值0 交给 pa (3)，随后 pa 会修改 deployment 的副本数为 0（4.2），之后的所容逻辑有 deployment 控制器来控制。而在 knative 需要删掉 Revision 的最后一个Pod之前，会有些特殊处理：</p>
 <ul>
 <li>pa 控制器会将 SKS 变为 proxy 模式（4.1），此时 SKS 的 Public service 后端的 endpoints 变为 Activator 的IP，所有的流量都直接导到 Activator（6.2）中。</li>
@@ -532,7 +532,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>knative serving 概述</div>
-      <div>https://qingwei9.github.io/2021/11/20/knative-summary-2021-11-20-knative-summary/</div>
+      <div>https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/</div>
     </div>
     <div class="license-meta">
       
@@ -574,7 +574,7 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解">
+                      <a href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">Kubernetes 弹性伸缩之 HPA 原理详解</span>
                         <span class="visible-mobile">上一篇</span>
@@ -584,7 +584,7 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述">
+                      <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述">
                         <span class="hidden-mobile">Kubernetes 默认调度器调度策略概述</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
@@ -606,7 +606,7 @@
         var options = Object.assign(
           {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
           {
-            id: '3608b545b740c58b4a47946e3181b83b'
+            id: 'a28d51ba8b4c9278ebdfaf376ba4c55c'
           }
         )
         var gitalk = new Gitalk(options);

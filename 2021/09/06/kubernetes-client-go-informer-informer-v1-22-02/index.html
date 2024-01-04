@@ -19,19 +19,19 @@
     <meta name="description" content="client-go informer 机制源码剖析（二）之 sharedIndexInformer 具体实现 本文档基于 v1.22 版本  1. Informer 机制回顾我们在 client-go informer 机制源码剖析（一） 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程： 1NewSharedInformerFactor">
 <meta property="og:type" content="article">
 <meta property="og:title" content="client-go Informer 机制源码剖析（二）">
-<meta property="og:url" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/index.html">
+<meta property="og:url" content="https://qingwei9.github.io/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="client-go informer 机制源码剖析（二）之 sharedIndexInformer 具体实现 本文档基于 v1.22 版本  1. Informer 机制回顾我们在 client-go informer 机制源码剖析（一） 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程： 1NewSharedInformerFactor">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/custom_controller.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/sharedIndexInformer01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/custom_controller.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/sharedIndexInformer01.png">
 <meta property="article:published_time" content="2021-09-06T02:03:43.000Z">
 <meta property="article:modified_time" content="2024-01-03T10:30:33.280Z">
 <meta property="article:author" content="qingwei">
 <meta property="article:tag" content="informer">
 <meta property="article:tag" content="client-go">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/custom_controller.png">
+<meta name="twitter:image" content="https://qingwei9.github.io/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/custom_controller.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -327,7 +327,7 @@
     
       
       
-        <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
+        <a href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">client-go Informer 机制源码剖析（一）</span>
@@ -336,7 +336,7 @@
     
       
       
-        <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
+        <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">client-go Informer 机制源码剖析（二）</span>
@@ -373,7 +373,7 @@
     
       
       
-        <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
+        <a href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 弹性伸缩之 HPA 原理详解</span>
@@ -410,7 +410,7 @@
     
       
       
-        <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
+        <a href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes Scheduler 概述</span>
@@ -419,7 +419,7 @@
     
       
       
-        <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
+        <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
@@ -460,13 +460,13 @@
 <h2 id="1-Informer-机制回顾"><a href="#1-Informer-机制回顾" class="headerlink" title="1. Informer 机制回顾"></a>1. Informer 机制回顾</h2><p>我们在 <a href="./informer_v1.22_01.md">client-go informer 机制源码剖析（一）</a> 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程：</p>
 <figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs livescript">NewSharedInformerFactory<span class="hljs-function"><span class="hljs-params">()</span> --&gt;</span> SharedInformerFactory<span class="hljs-function"><span class="hljs-params">(接口)</span> --&gt;</span> PodInformer<span class="hljs-function"><span class="hljs-params">(具体的 Informer 接口)</span> --&gt;</span> cache.SharedIndexInformer(接口)<br></code></pre></td></tr></table></figure>
 <p>其中 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go#L96">NewSharedInformerFactory()</a> 函数用来构建 informerFactory 工厂函数，会得到包含 k8s 内部所有资源的 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/factory.go#L187">SharedInformerFactory</a> 接口，再将具体的的 Informer（如 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/core/v1/pod.go#L37">PodInformer</a>）注册到 informerFactory 中完成 informer 的初始化操作，最后再启动 informerFactory，同步 cache 等。而注册具体 Informer 时其实就是初始化/构建 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L186">cache.SharedIndexInformer</a>，完成 <code>ListWatch</code>、<code>反射器</code>、<code>deltafifo</code>、<code>indexer</code>、<code>controller</code>、<code>processer(回调函数)</code> 等组件的初始化及启动过程。如下给出一张各个组件之间关系的图（注意：图中的 <code>WorkQueue</code> 和 <code>Control loop</code> 先不讲解，后面会讲解自定义控制器时讲到）：</p>
-<p><img src="/2021/09/06/client-go-informer-informer-v1-22-02/custom_controller.png" srcset="/img/loading.gif" lazyload alt="custom_controller"></p>
+<p><img src="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/custom_controller.png" srcset="/img/loading.gif" lazyload alt="custom_controller"></p>
 <h2 id="2-sharedIndexInformer-详解"><a href="#2-sharedIndexInformer-详解" class="headerlink" title="2. sharedIndexInformer 详解"></a>2. sharedIndexInformer 详解</h2><blockquote>
 <p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go">https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go</a></p>
 </blockquote>
 <h3 id="2-1-sharedIndexInformer-结构体"><a href="#2-1-sharedIndexInformer-结构体" class="headerlink" title="2.1. sharedIndexInformer 结构体"></a>2.1. sharedIndexInformer 结构体</h3><p><code>sharedIndexInformer</code> 实现了 SharedIndexInformer 接口，而 SharedIndexInformer 封装了 SharedInformer 接口，并在其基础上添加了 <code>AddIndexers/GetIndexer</code> 的操作。<a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/tools/cache/shared_informer.go#L287">sharedIndexInformer</a> 包含几个非常重要的组件，如下结构体只显示重要组件：</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> client-go<span class="hljs-regexp">/tools/</span>cache/shared_informer.go<br>type sharedIndexInformer struct &#123;<br>	indexer    Indexer   <span class="hljs-regexp">//</span> 本地索引存储，基于 index + threadSafeStore 实现的本地 cache 存储<br>	controller Controller <span class="hljs-regexp">//</span> 用于管理 sharedIndexInformer 中的各个组件，并控制各个组件的正常运行<br>	processor  *sharedProcessor <span class="hljs-regexp">//</span> 回调处理函数，从 fifo 队列中消费（Pop）消息进行处理<br>	listerWatcher ListerWatcher <span class="hljs-regexp">//</span> 反射器通过 listwatch 从 k8s apiserver 的 etcd 中获取数据，并将数据放入 fifo 中<br>    ......<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>上面 4个组件在 sharedIndexInformer 中至关重要，后面会专门讲解，这里只做简单介绍，下图简单描述了下 sharedIndexInformer 结构体内 4个重要组件的关心和流程图：<br><img src="/2021/09/06/client-go-informer-informer-v1-22-02/sharedIndexInformer01.png" srcset="/img/loading.gif" lazyload alt="sharedindexinformer01"></p>
+<p>上面 4个组件在 sharedIndexInformer 中至关重要，后面会专门讲解，这里只做简单介绍，下图简单描述了下 sharedIndexInformer 结构体内 4个重要组件的关心和流程图：<br><img src="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/sharedIndexInformer01.png" srcset="/img/loading.gif" lazyload alt="sharedindexinformer01"></p>
 <p>下面将根据流程及上图所示各个模块，从上到下逐一讲解其功能：</p>
 <ul>
 <li><code>listerWatcher</code>: 该组件实现 list-watch 机制，其<code>初始化</code>位置在每个具体的 Informer (如 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/client-go/blob/master/informers/core/v1/pod.go#L60">PodInformer</a>)中，在 controller 中会将其封装在 <code>反射器</code> 中，使反射器具体有 <code>list-watch</code> 的功能。list-watch 通过 k8s apiservice 从 etcd 中获取数据，并将数据放入 deltafifo 队列中。</li>
@@ -575,7 +575,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>client-go Informer 机制源码剖析（二）</div>
-      <div>https://qingwei9.github.io/2021/09/06/client-go-informer-informer-v1-22-02/</div>
+      <div>https://qingwei9.github.io/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/</div>
     </div>
     <div class="license-meta">
       
@@ -617,7 +617,7 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述">
+                      <a href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">Kubernetes Scheduler 概述</span>
                         <span class="visible-mobile">上一篇</span>
@@ -627,7 +627,7 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）">
+                      <a href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）">
                         <span class="hidden-mobile">client-go Informer 机制源码剖析（一）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
@@ -649,7 +649,7 @@
         var options = Object.assign(
           {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
           {
-            id: 'e944744e8c551d4fa1602d3aad796d79'
+            id: '6d2fa8dc63bdca753dabd59cee220715'
           }
         )
         var gitalk = new Gitalk(options);

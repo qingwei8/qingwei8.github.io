@@ -16,25 +16,28 @@
   <meta name="author" content="qingwei">
   <meta name="keywords" content="kubernetes,docker,serverless,微服务,原云生">
   
-    <meta name="description" content="Kubernetes 默认调度器调度策略概述在上一篇文章Kubernetes Scheduler 概述 中有讲述 Kubernetes scheduler 的工作原理和架构，其中有讲述到 kube-scheduler 的核心就是通过调度算法（预选算法和优选算法）来选出合适的节点供 pod 节点使用。本篇文章主要介绍汇总下 Kubernetes 默认调度器中使用到的 Predicates(预选算法)">
+    <meta name="description" content="Kubernetes Scheduler 概述调度器的主要职责是负责整个集群资源的调度功能，根据特定的调度算法和策略，将业务调度到最优的工作节点上去，达到更加合理、更加充分利用集群资源的目的。而 Kubernetes 中的默认调度器（default-scheduler）是 kube-scheduler，其主要职责就是为一个新创建出来的 Pod，寻找一个最合适的节点（Node）。其主要思想可简单表述">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kubernetes 默认调度器调度策略概述">
-<meta property="og:url" content="https://qingwei9.github.io/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/index.html">
+<meta property="og:title" content="Kubernetes Scheduler 概述">
+<meta property="og:url" content="https://qingwei9.github.io/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
-<meta property="og:description" content="Kubernetes 默认调度器调度策略概述在上一篇文章Kubernetes Scheduler 概述 中有讲述 Kubernetes scheduler 的工作原理和架构，其中有讲述到 kube-scheduler 的核心就是通过调度算法（预选算法和优选算法）来选出合适的节点供 pod 节点使用。本篇文章主要介绍汇总下 Kubernetes 默认调度器中使用到的 Predicates(预选算法)">
+<meta property="og:description" content="Kubernetes Scheduler 概述调度器的主要职责是负责整个集群资源的调度功能，根据特定的调度算法和策略，将业务调度到最优的工作节点上去，达到更加合理、更加充分利用集群资源的目的。而 Kubernetes 中的默认调度器（default-scheduler）是 kube-scheduler，其主要职责就是为一个新创建出来的 Pod，寻找一个最合适的节点（Node）。其主要思想可简单表述">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-10-28T12:28:01.000Z">
-<meta property="article:modified_time" content="2024-01-03T10:44:53.766Z">
+<meta property="og:image" content="https://qingwei9.github.io/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/scheduler-summary01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/scheduler-summary02.png">
+<meta property="article:published_time" content="2021-10-20T00:08:20.000Z">
+<meta property="article:modified_time" content="2024-01-03T10:34:48.785Z">
 <meta property="article:author" content="qingwei">
 <meta property="article:tag" content="scheduler">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://qingwei9.github.io/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/scheduler-summary01.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Kubernetes 默认调度器调度策略概述 - Qingwei的博客</title>
+  <title>Kubernetes Scheduler 概述 - Qingwei的博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Kubernetes 默认调度器调度策略概述"></span>
+            <span id="subtitle" data-typed-text="Kubernetes Scheduler 概述"></span>
           
         </div>
 
@@ -210,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2021-10-28 20:28" pubdate>
-          2021年10月28日 晚上
+        <time datetime="2021-10-20 08:08" pubdate>
+          2021年10月20日 早上
         </time>
       </span>
     
@@ -222,7 +225,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.9k 字
+          3.6k 字
         
       </span>
     
@@ -233,7 +236,7 @@
         
         
         
-          50 分钟
+          31 分钟
         
       </span>
     
@@ -324,7 +327,7 @@
     
       
       
-        <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
+        <a href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">client-go Informer 机制源码剖析（一）</span>
@@ -333,7 +336,7 @@
     
       
       
-        <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
+        <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">client-go Informer 机制源码剖析（二）</span>
@@ -370,7 +373,7 @@
     
       
       
-        <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
+        <a href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 弹性伸缩之 HPA 原理详解</span>
@@ -407,18 +410,18 @@
     
       
       
-        <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
+        <a href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
            class="list-group-item list-group-item-action
-           ">
+           active">
           <span class="category-post">Kubernetes Scheduler 概述</span>
         </a>
       
     
       
       
-        <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
+        <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
            class="list-group-item list-group-item-action
-           active">
+           ">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
         </a>
       
@@ -446,63 +449,39 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Kubernetes 默认调度器调度策略概述</h1>
+            <h1 style="display: none">Kubernetes Scheduler 概述</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="Kubernetes-默认调度器调度策略概述"><a href="#Kubernetes-默认调度器调度策略概述" class="headerlink" title="Kubernetes 默认调度器调度策略概述"></a>Kubernetes 默认调度器调度策略概述</h1><p>在上一篇文章<a href="../summary/scheduler-summary.md">Kubernetes Scheduler 概述</a> 中有讲述 Kubernetes scheduler 的工作原理和架构，其中有讲述到 kube-scheduler 的核心就是通过调度算法（预选算法和优选算法）来选出合适的节点供 pod 节点使用。本篇文章主要介绍汇总下 Kubernetes 默认调度器中使用到的 Predicates(预选算法) 和 Priorities（优选算法）。</p>
-<h2 id="1-Predicates-预选算法"><a href="#1-Predicates-预选算法" class="headerlink" title="1. Predicates 预选算法"></a>1. Predicates 预选算法</h2><p>Predicates 预选算法在调度过程中可以理解为 Filter 的功能，即：它按照指定的调度策略，从当前集群的所有节点中，“过滤”出一系列符合条件的节点。这些节点，都是可以运行待调度 Pod 的宿主机。在 Kubernetes 中，默认的调度策略按照类型分类可以有如下四种：</p>
+                <h1 id="Kubernetes-Scheduler-概述"><a href="#Kubernetes-Scheduler-概述" class="headerlink" title="Kubernetes Scheduler 概述"></a>Kubernetes Scheduler 概述</h1><p>调度器的主要职责是负责整个集群资源的调度功能，根据特定的调度算法和策略，将业务调度到最优的工作节点上去，达到更加合理、更加充分利用集群资源的目的。而 Kubernetes 中的默认调度器（default-scheduler）是 kube-scheduler，其主要职责就是为一个新创建出来的 Pod，寻找一个最<br>合适的节点（Node）。其主要思想可简单表述成下面两个阶段：</p>
+<ol>
+<li>根据<strong>过滤算法</strong>从集群的所有节点中挑选出所有可以运行该 Pod 的节点；</li>
+<li>从第一步的结果中，再根据<strong>优选算法</strong>挑选一个最符合条件的节点作为最终结果。<br>所以在具体的调度流程中，默认调度器会首先调用一组叫作 Predicate 的调度算法，来检查每个 Node。然后，再调用一组叫作 Priority 的调度算法，来给上一步得到的结果里的每个 Node 打分。最终的调度结果，就是得分最高的那个 Node。调度器简单逻辑如下所示：</li>
+</ol>
+<p><img src="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/scheduler-summary01.png" srcset="/img/loading.gif" lazyload alt="summary01"></p>
+<h2 id="kube-scheduler-调度器的工作原理"><a href="#kube-scheduler-调度器的工作原理" class="headerlink" title="kube-scheduler 调度器的工作原理"></a>kube-scheduler 调度器的工作原理</h2><p>从上面的简介中可知调度器主要包括<strong>预选</strong>和<strong>优选</strong>两个大阶段，但为了更好的提高调度器的性能 Kubernetes 对默认调度器的设计非常复杂。个人看了张磊老师的文章，觉得大佬写的通俗易懂，在这里我主要做个记录吧，后面可借鉴这个文章去分析源码是如何实现的。在 Kubernetes 中，默认调度器的工作原理，可以用如下所示的一幅示意图来表示。</p>
+<p><img src="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/scheduler-summary02.png" srcset="/img/loading.gif" lazyload alt="summary02"></p>
+<p>可以看到，<strong>Kubernetes 的调度器的核心，实际上就是两个相互独立的控制循环。</strong><br>其中，<strong>第一个控制循环，我们可以称之为 Informer Path。</strong> 它的主要目的，是启动一系列 Informer，用来<code>监听（Watch）Etcd 中 Pod、Node、Service 等与调度相关的 API 对象的变化</code>。比如，当一个待调度 Pod（即：它的 nodeName 字段是空的）被创建出来之后，调度器就会通过 Pod Informer 的 Handler，将这个待调度 Pod 添加进调度队列。在默认情况下，Kubernetes 的调度队列是一个 PriorityQueue（优先级队列），并且当某些集群信息发生变化的时候，调度器还会对调度队列里的内容进行一些特殊操作。这里的设计，主要是出于调度优先级和抢占的考虑，我会在后面的文章中再详细介绍这部分内容。<br>此外，Kubernetes 的默认调度器还要负责<code>对调度器缓存（即：scheduler cache）进行更新</code>。事实上，Kubernetes 调度部分进行性能优化的一个最根本原则，就是尽最大可能将集群信息Cache 化，以便从根本上提高 Predicate 和 Priority 调度算法的执行效率。</p>
+<p>而<strong>第二个控制循环，是调度器负责 Pod 调度的主循环，我们可以称之为 Scheduling Path。</strong> Scheduling Path 的主要逻辑，就是不断地从调度队列里出队一个 Pod。然后，调用Predicates 算法进行“过滤”。这一步“过滤”得到的一组 Node，就是所有可以运行这个Pod 的宿主机列表。当然，Predicates 算法需要的 Node 信息，都是从 Scheduler Cache 里直接拿到的，这是调度器保证算法执行效率的主要手段之一。</p>
+<p>接下来，调度器就会再调用 Priorities 算法为上述列表里的 Node 打分，分数从 0 到 10。得分最高的 Node，就会作为这次调度的结果。</p>
+<p>调度算法执行完成后，调度器就需要将 Pod 对象的 nodeName 字段的值，修改为上述 Node的名字。<strong>这个步骤在 Kubernetes 里面被称作 Bind。</strong> 但是，为了不在关键调度路径里远程访问 APIServer，Kubernetes 的默认调度器在 Bind 阶段，只会更新 Scheduler Cache 里的 Pod 和 Node 的信息。<strong>这种基于“乐观”假设的 API 对象更新方式，在 Kubernetes 里被称作 Assume。</strong> Assume 之后，调度器才会创建一个 Goroutine 来异步地向 APIServer 发起更新 Pod 的请求，来真正完成 Bind 操作。如果这次异步的 Bind 过程失败了，其实也没有太大关系，等Scheduler Cache 同步之后一切就会恢复正常。</p>
+<p><strong>注意：</strong> 调度器调度之前是只监听 spec.nodeName 为空的 pod，并将其添加到调度器的优先级队列中，调度器执行之后是将选中的 node 名字赋值给 pod 的 spec.nodeName 中，即表示调度成功。</p>
+<p>当然，正是由于上述 Kubernetes 调度器的“乐观”绑定的设计，当一个新的 Pod 完成调度需要在某个节点上运行起来之前，该节点上的 <code>kubelet 还会通过一个叫作 Admit 的操作来再次验证该 Pod 是否确实能够运行在该节点上</code>。这一步 Admit 操作，实际上就是把一组叫作GeneralPredicates 的、最基本的调度算法，比如：“资源是否可用”、“端口是否冲突”等再执行一遍，作为 kubelet 端的二次确认。</p>
+<p><strong>除了上述的“Cache 化”和“乐观绑定”，Kubernetes 默认调度器还有一个重要的设计，那就是“无锁化”。</strong> 在 Scheduling Path 上，调度器会启动多个 Goroutine（最多16个）以节点为粒度并发执行 Predicates 算法，从而提高这一阶段的执行效率。而与之类似的，Priorities 算法也会以 MapReduce 的方式并行计算然后再进行汇总。而在这些所有需要并发的路径上，调度器会避免设置任何全局的竞争资源，从而免去了使用锁进行同步带来的巨大的性能损耗。</p>
+<p>所以，在这种思想的指导下，如果你再去查看一下前面的调度器原理图，你就会发现，Kubernetes 调度器只有对调度队列和 Scheduler Cache 进行操作时，才需要加锁。而这两部分操作，都不在 Scheduling Path 的算法执行路径上。</p>
+<p>当然，Kubernetes 调度器的上述设计思想，也是在集群规模不断增长的演进过程中逐步实现的。<strong>尤其是 “Cache 化”，这个变化其实是最近几年 Kubernetes 调度器性能得以提升的一个关键演化。</strong></p>
+<p>不过，随着 Kubernetes 项目发展到今天，它的默认调度器也已经来到了一个关键的十字路口。事实上，Kubernetes 现今发展的主旋律，是整个开源项目的“民主化”。也就是说，Kubernetes 下一步发展的方向，是组件的轻量化、接口化和插件化。所以，我们才有了 CRI、CNI、CSI、CRD、Aggregated APIServer、Initializer、Device Plugin 等各个层级的可扩展能力。可是，默认调度器，却成了 Kubernetes 项目里最后一个没有对外暴露出良好定义过的、可扩展接口的组件。当然随着时间的发展以及用户和市场的需求，Kubernete scheduler 可扩展接口也得到了支持，后面我将详细介绍 Scheduler Framework。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要介绍了 Kubernetes 默认调度器 kube-scheduler 的实现原理，即两个控制循环：Informer path 和 Scheduling path，这两个控制循环实现了对资源依赖的解藕，实现了高性能的调度器。其中 Informer path 与 apiserver 建立通信不断 watch 资源变化情况，并将其本地cache 化；Scheduling path 则不断的从 cache 中读取数据，通过一系列的调度算法后对pod 和资源进行调度和分配，最终将 pod 绑定到合适的节点上。从上面的原理可知，Kubernetes 调度器实现高性能优化的方法主要有以下几个方面：</p>
 <ul>
-<li>第一种类型，叫作 GeneralPredicates 类型的过滤策略：这种类型的策略主要负责最基础的调度策略。</li>
-<li>第二种是与 Volume 相关的过滤规则：主要负责的是跟容器持久化 Volume 相关的调度策略。</li>
-<li>第三种是与宿主机相关的过滤规则：主要考察待调度 Pod 是否满足 Node 本身的某些条件。</li>
-<li>第四种是与 Pod相关的过滤规则。这一组规则，跟 GeneralPredicates 大多数是重合的。另有比较特殊的是 PodAffinityPredicate（pod亲和性相关的过滤规则）。</li>
+<li><strong>优先级队列的实现：</strong> 对于高优先级的 pod 或者特殊的 pod，可以通过指定器优先级来提高被优先调度的可能性。</li>
+<li><strong>资源本地 cache 化：</strong> Informer path 中 pod 添加到优先级队列中和 nodeinfo 添加到本地cache 中。</li>
+<li><strong>Assume 乐观绑定：</strong> bind 阶段不在关键路径调用 apiserver，只更新 scheduler cache 信息。正真的 bind操作通过 goroutine 异步执行。</li>
+<li><strong>并行执行过滤算法和打分算法：</strong> 同一个 pod 在执行不相关的调度算法时会启用 16个 goroutine 来并行计算。</li>
+<li><strong>循环无锁化：</strong> 调度器的主循环中尽量不产生资源竞争，即不添加锁处理；只有在更新优先级队列和 cache 时才会添加锁，避免数据竞争，但这两步都不主循环中。</li>
+<li><strong>提前结束过滤：</strong> 其实为提高调度器的执行性能，在 k8s 1.12 之后会增加一个 percentageOfNodesToScore 字段，即指定需要打分的节点数（百分比），当过滤出来的节点数（满足条件可打分的节点）达到这个指定的值时会停止过滤集群中剩余的pod；只会对过滤出来的指定数量的pod进行打分判断。这种方法在集群规模很小是效果不是很显著，但是在集群规模很大时，调度器的性能提高会非常显著。</li>
 </ul>
-<h3 id="1-1-GeneralPredicates-过滤规则"><a href="#1-1-GeneralPredicates-过滤规则" class="headerlink" title="1.1. GeneralPredicates 过滤规则"></a>1.1. GeneralPredicates 过滤规则</h3><p>这一组过滤规则，负责的是最基础的调度策略。部分规则统计如下表所示：<br>|规则|说明|<br>|—|—|<br>|PodFitsResources| 节点上剩余的资源（如 CPU 和内存）是否满足 Pod 请求的资源，计算时会根据 Pod 的 requests 字段进行判断求值|<br>|PodFitsHost| 如果 Pod 指定了 NodeName，检查节点名称是否和 NodeName 匹配。|<br>|PodFitsHostPorts | 如果 Pod 中定义了 spec.hostPort 属性，那么需要先检查这个指定端口是否已经被节点上其他服务占用了|<br>|PodMatchNodeSelector |检查 Pod 的 nodeSelector 或者 nodeAffinity 指定的节点，是否与node 的标签值匹配。|</p>
-<p>像上面这样一组 GeneralPredicates，正是 Kubernetes 考察一个 Pod 能不能运行在一个 Node 上最基本的过滤条件。所以，GeneralPredicates 也会被其他组件（比如kubelet）直接调用。在文章<a href="../summary/scheduler-summary.md">Kubernetes Scheduler 概述</a> 有提到过，kubelet 在启动 Pod 前，会执行一个 Admit 操作来进行二次确认。这里二次确认的规则，就是执行一遍 GeneralPredicates 过滤规则。</p>
-<h3 id="1-2-与-Volume-相关的过滤规则"><a href="#1-2-与-Volume-相关的过滤规则" class="headerlink" title="1.2. 与 Volume 相关的过滤规则"></a>1.2. 与 Volume 相关的过滤规则</h3><p>这一组过滤规则，负责的是跟容器持久化 Volume 相关的调度策略。部分规则统计如下：</p>
-<table>
-<thead>
-<tr>
-<th>规则</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>NoDiskConflict</td>
-<td>检查是否多个 Pod 之间声明挂载的持久化 Volume 是否有冲突。比如，AWS EBS 类型的 Volume，是不允许被两个 Pod 同时使用的。</td>
-</tr>
-<tr>
-<td>NoVolumeZoneConflict</td>
-<td>检测 Pod 请求的 Volumes 在节点上是否可用，因为某些存储卷存在区域调度约束</td>
-</tr>
-<tr>
-<td>MaxPDVolumeCountPredicate</td>
-<td>检查一个节点上某种类型的持久化 Volume 是不是已经超过了一定数目，如果是的话，那么声明使用该类型持久化 Volume 的 Pod 就不能再调度到这个节点了。</td>
-</tr>
-<tr>
-<td>VolumeZonePredicate</td>
-<td>检查持久化 Volume 的 Zone（高可用域）标签，是否与待考察节点的 Zone 标签相匹配。</td>
-</tr>
-<tr>
-<td>VolumeBindingPredicate</td>
-<td>检查 Pod 对应的 PV 的 nodeAffinity 字段，是否跟某个节点的标签相匹配。这个过滤规则在 local PV 的延迟绑定中非常有用，Local Persistent Volume（本地持久化卷），必须使用 nodeAffinity 来跟某个具体的节点绑定。此外，如果该 Pod 的 PVC 还没有跟具体的 PV 绑定的话，调度器还要负责检查所有待绑定 PV，当有可用的 PV 存在并且该 PV 的 nodeAffinity 与待考察节点一致时，这条规则才会返回“成功”。</td>
-</tr>
-</tbody></table>
-<h3 id="1-3-与宿主机-node-节点相关的过滤规则"><a href="#1-3-与宿主机-node-节点相关的过滤规则" class="headerlink" title="1.3. 与宿主机 node 节点相关的过滤规则"></a>1.3. 与宿主机 node 节点相关的过滤规则</h3><p>这一组规则，主要考察待调度 Pod 是否满足 Node 本身的某些条件。部分规则统计如下：<br>|规则|说明|<br>|—|—|<br>|CheckNodeDiskPressure| 检查节点磁盘空间是否符合要求|<br>|PodToleratesNodeTaints| 负责检查我们经常用到的 Node 的“污点”机制。只有当 Pod 的 Toleration 字段与 Node 的 Taint 字段能够匹配的时候，这个 Pod 才能被调度到该节点上。|<br>|NodeMemoryPressurePredicate | 检查当前节点的内存是不是已经不够充足，如果是的话，那么待调度 Pod 就不能被调度到该节点上。|<br>|CheckNodeCondition | Node 可以上报其自身的状态，如磁盘、网络不可用，表明 kubelet 未准备好运行 Pod，如果节点被设置成这种状态，那么 Pod 不会被调度到这个节点上|</p>
-<h3 id="1-4-与-pod-相关的过滤规则（主要是-pod-亲和性过滤）"><a href="#1-4-与-pod-相关的过滤规则（主要是-pod-亲和性过滤）" class="headerlink" title="1.4. 与 pod 相关的过滤规则（主要是 pod 亲和性过滤）"></a>1.4. 与 pod 相关的过滤规则（主要是 pod 亲和性过滤）</h3><p>这一组规则，跟 GeneralPredicates 大多数是重合的。另外一个比较特殊的是 <code>PodAffinityPredicate</code> 这个规则，检查待调度 Pod 与 Node 上的已有 Pod 之间的亲密（affinity）和反亲密（anti-affinity）关系，即检查 pod 之间的亲和性和反亲和性关系。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span><br><span class="hljs-attr">kind:</span> <span class="hljs-string">Pod</span><br><span class="hljs-attr">metadata:</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">with-pod-antiaffinity</span><br><span class="hljs-attr">spec:</span><br>    <span class="hljs-attr">containers:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">with-pod-affinity</span><br>      <span class="hljs-attr">image:</span> <span class="hljs-string">docker.io/ocpqe/hello-pod</span><br>    <span class="hljs-attr">affinity:</span><br>        <span class="hljs-attr">podAntiAffinity:</span><br>            <span class="hljs-attr">requiredDuringSchedulingIgnoredDuringExecution:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">weight:</span> <span class="hljs-number">100</span><br>              <span class="hljs-attr">podAffinityTerm:</span><br>                <span class="hljs-attr">labelSelector:</span><br>                    <span class="hljs-attr">matchExpressions:</span><br>                    <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">security</span><br>                      <span class="hljs-attr">operator:</span> <span class="hljs-string">In</span><br>                      <span class="hljs-attr">values:</span><br>                      <span class="hljs-bullet">-</span> <span class="hljs-string">S2</span><br>                <span class="hljs-attr">topologyKey:</span> <span class="hljs-string">kubernetes.io/hostname</span><br>        <span class="hljs-attr">podAffinity:</span><br>            <span class="hljs-attr">requiredDuringSchedulingIgnoredDuringExecution:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">labelSelector:</span><br>                <span class="hljs-attr">matchExpressions:</span><br>                <span class="hljs-bullet">-</span> <span class="hljs-attr">key:</span> <span class="hljs-string">security</span><br>                  <span class="hljs-attr">operator:</span> <span class="hljs-string">In</span><br>                  <span class="hljs-attr">values:</span><br>                  <span class="hljs-bullet">-</span> <span class="hljs-string">S1</span><br>            <span class="hljs-attr">topologyKey:</span> <span class="hljs-string">failure-domain.beta.kubernetes.io/zone</span><br></code></pre></td></tr></table></figure>
-
-<p>如上这个例子中所示定义了 pod 之间否反亲和性，表示这个 Pod 不希望跟任何携带了 security=S2 标签的 Pod 存在于同一个 Node 上。<strong>注意：</strong> 对于 PodAffinityPredicate 可以通过 <code>topologyKey</code> 关键字指定规则生效的作用域，比如上面这条规则，只会对携带了 Key 是kubernetes.io/hostname 标签的 Node 上的所有 pods 执行pod 反亲和性过滤判断。而后面的 podAffinity（pod 亲和性判断）表示该 pod只会被调度到已经有携带了 security=S1 标签的 Pod 运行的 Node上，同时这条规则的作用域是所有携带 Key 是failure-domain.beta.kubernetes.io/zone 标签的 Node 上操作。<br>同时 <code>requiredDuringSchedulingIgnoredDuringExecution</code> 字段表示的含义是：调度器在调度 pod 时必须考虑这个过滤规则，即对 pod 进行过滤检查（requiredDuringScheduling）；但如果是已经运行的 Pod 发生变化（如 Label 被修改），导致该 Pod 不再适合运行在这个 Node 上了，Kubernetes 不会对 pod进行主动修正（IgnoredDuringExecution），即 kubelet 不会 pod 执行驱逐操作。</p>
-<p><strong>注意:</strong> 调度器在执行上面的过滤规则时，会异步启动 <code>16 个 goroutine</code> 来执行过滤算法，最终会得到满足条件的 node 列表。同时在为每个 Node 执行 Predicates 时，调度器会按照固定的顺序来进行检查。这个顺序是按照 Predicates 本身的含义来确定的。比如，宿主机相关的 Predicates 会被放在相对靠前的位置进行检查。要不然的话，在一台资源已经严重不足的宿主机上，上来就开始计算 PodAffinityPredicate，是没有实际意义的。</p>
-<p>除了这些过滤算法之外，还有一些其他的算法，更多更详细的我们可以查看源码文件：k8s.io/kubernetes/pkg/scheduler/algorithm/predicates/predicates.go。</p>
-<h2 id="2-Priorities-优选算法"><a href="#2-Priorities-优选算法" class="headerlink" title="2. Priorities 优选算法"></a>2. Priorities 优选算法</h2><p>在预选阶段完成了节点的“过滤”之后，优选阶段的工作就是为这些节点打分，这里打分的范围是 0-10 分，得分最高的节点就是最后被 Pod 绑定的最佳节点。部分规则统计如下：<br>|规则|说明|<br>|—|—|<br>|LeastRequestedPriority|通过计算node cpu 和内存的剩余资源数来打分，剩余资源多的分数越高，即这个算法实际上就是在选择空闲资源（CPU 和 Memory）最多的宿主机。|<br>|BalancedResourceAllocation | 通过计算cpu、memory、磁盘等资源分配之间的距离，资源分配差距越小的节点分数越高。即调度时会从所有节点中优先选择各种资源分配最均衡的那个节点，从而避免一个节点上 CPU 被大量分配、而 Memory 大量剩余的情况出现。常与 LeastRequestedPriority 一起配合使用。|<br>|ImageLocalityPriority|如果待调度 Pod 需要使用的镜像很大，并且已经存在于某些 Node上，那么这些 Node 的得分就会比较高。这个算法的缺点是会造成调度pod的堆叠现象，即所有使用该镜像的pod 都会调度到该 node 上。为了避免引发调度堆叠，调度器在计算得分的时候必须根据镜像的分布进行优化，即：如果大镜像分布的节点数目很少，那么这些节点的权重就会被调低，从而降低引起调度堆叠的风险。|<br>|SelectorSpreadPriority | 为了更好的高可用，对同属于一个 Deployment 或者 RC 下面的多个 Pod 副本，尽量调度到多个不同的节点上，当一个 Pod 被调度的时候，会先去查找该 Pod 对应的 controller，然后查看该 controller 下面的已存在的 Pod，运行 Pod 越少的节点权重越高|<br>|InterPodAffinityPriority|遍历 Pod 的亲和性条目，并将那些能够匹配到给定节点的条目的权重相加，结果值越大的节点得分越高|<br>|MostRequestedPriority | 空闲资源比例越低的 Node 得分越高，这个调度策略会把你的所有的工作负载（Pod）调度到尽量少的节点上，类似于资源集中使用|<br>|RequestedToCapacityRatioPriority| 为 Node 上每个资源占用比例设定得分值，给资源打分函数在打分时使用|<br>|NodePreferAvoidPodsPriority| 这个策略将根据 Node 的注解信息中是否含有 scheduler.alpha.kubernetes.io/preferAvoidPods 来计算其优先级，使用这个策略可以将两个不同 Pod 运行在不同的 Node 上|<br>|NodeAffinityPriority | 基于 Pod 属性中 PreferredDuringSchedulingIgnoredDuringExecution 来进行 Node 亲和性调度|<br>|TaintTolerationPriority| 基于 Pod 中对每个 Node 上污点容忍程度进行优先级评估，这个策略能够调整待选 Node 的排名|<br>| ServiceSpreadingPriority | 这个调度策略的主要目的是确保将归属于同一个 Service 的 Pod 调度到不同的 Node 上，这个策略的最终目的是：即使在一个 Node 宕机之后 Service 也具有很强容灾能力。|<br>|CalculateAntiAffinityPriorityMap| 这个策略主要是用来实现 Pod 反亲和的|<br>|EqualPriorityMap| 将所有的 Node 设置成相同的权重，默认为 1|</p>
-<p>除了这些策略之外，还有很多其他的策略，同样我们可以查看源码文件：k8s.io/kubernetes/pkg/scheduler/algorithm/priorities/ 了解更多信息。每一个优选函数会返回一个 0-10 的分数，分数越高表示节点越优，同时每一个函数也会对应一个表示权重的值。最终主机的得分用以下公式计算得出：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">finalScoreNode</span> = (weight<span class="hljs-number">1</span> * priorityFunc<span class="hljs-number">1</span>) + (weight<span class="hljs-number">2</span> * priorityFunc<span class="hljs-number">2</span>) + … + (weightn * priorityFuncn)<br></code></pre></td></tr></table></figure>
-
-<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><p>本文主要讲述了 Kubernetes 调度器的 Predicates 和 Priorities 里默认调度规则的主要工作原理。在实际的执行过程中，调度器里关于集群和 Pod 的信息都已经缓存化，所以这些算法的执行过程还是比较快的。此外，对于比较复杂的调度算法来说，比如 PodAffinityPredicate，它们在计算的时候不只关注待调度 Pod 和待考察 Node，还需要关注整个集群的信息，比如，遍历所有节点，读取它们的 Labels。这时候，Kubernetes 调度器会在为每个待调度 Pod 执行该调度算法之前，先将算法需要的集群信息初步计算一遍，然后缓存起来。这样，在真正执行该算法的时候，调度器只需要读取缓存信息进行计算即可，从而避免了为每个 Node 计算 Predicates 的时候反复获取和计算整个集群的信息。</p>
-<p>此外，除了本篇讲述的这些规则，Kubernetes 调度器里还有一些默认不会开启的策略。你可以通过为 kube-scheduler 指定一个配置文件或者创建一个 ConfigMap ，来配置哪些规则需要开启、哪些规则需要关闭。并且，你可以通过为 Priorities 设置权重，来控制调度器的调度行为。</p>
+<p>目前 Kubernetes 默认调度器能支持绝大部分场景，对于一些比较特殊复杂的场景中用户可以通过后面介绍的 Scheduler Framework 以及插件机制进行扩展。</p>
 
                 
               </div>
@@ -574,8 +553,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Kubernetes 默认调度器调度策略概述</div>
-      <div>https://qingwei9.github.io/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/</div>
+      <div>Kubernetes Scheduler 概述</div>
+      <div>https://qingwei9.github.io/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/</div>
     </div>
     <div class="license-meta">
       
@@ -587,7 +566,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2021年10月28日</div>
+          <div>2021年10月20日</div>
         </div>
       
       
@@ -617,9 +596,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/11/20/knative-summary-2021-11-20-knative-summary/" title="knative serving 概述">
+                      <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">knative serving 概述</span>
+                        <span class="hidden-mobile">Kubernetes 默认调度器调度策略概述</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -627,8 +606,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述">
-                        <span class="hidden-mobile">Kubernetes Scheduler 概述</span>
+                      <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）">
+                        <span class="hidden-mobile">client-go Informer 机制源码剖析（二）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -649,7 +628,7 @@
         var options = Object.assign(
           {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
           {
-            id: 'f1eb1adb43d4bc1c598c02b3693ab1ee'
+            id: 'c28ce7c8a57afb5b44657c1fe8f9bf62'
           }
         )
         var gitalk = new Gitalk(options);

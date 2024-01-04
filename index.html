@@ -232,13 +232,46 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2022/01/18/hpa-2022-01-18-hpa/" target="_self">
+        <a href="/2024/01/04/kubeadm-2024-01-04-kubeadm/" target="_self">
+          kubeadm
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2024/01/04/kubeadm-2024-01-04-kubeadm/" target="_self">
+        <div>
+          使用 kubeadm 安装 kubernetes 集群对于需要学习 kubernetes 的同学来说，必须需要先学会如何搭建一个学习环境（即 kubernetes 集群），然后才能学习更多相关 kubernetes 及云原生的知识。目前随着社区的不断发展，kubernetes 的搭建已经非常方便，有基于 minikube&#x2F;kind 等工具搭建的单节点集群，其搭建速度非常快（除去拉去镜像的时间，集群
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-01-04 09:27" pubdate>
+              2024-01-04
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" target="_self">
           Kubernetes 弹性伸缩之 HPA 原理详解
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2022/01/18/hpa-2022-01-18-hpa/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" target="_self">
         <div>
           Kubernetes 弹性伸缩之 HPA 原理详解本文基于 kubernetes 1.23 版本源码进行分析。 1. 前言Kubernetes 弹性伸缩机制的主要目的是解决资源与业务负载之间供需平衡的问题。当随着业务的实际使用逐渐增大时，其对资源的需求也将逐渐变得更多，这时就需要对集群和业务增加资源以满足需求，即扩容；而当随着业务结束后，其所需要的资源将变得很少，此时为了不浪费资源就需要将集群或业
         </div>
@@ -302,13 +335,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/11/20/knative-summary-2021-11-20-knative-summary/" target="_self">
+        <a href="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/" target="_self">
           knative serving 概述
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/11/20/knative-summary-2021-11-20-knative-summary/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/" target="_self">
         <div>
           knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部
         </div>
@@ -370,13 +403,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" target="_self">
+        <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" target="_self">
           Kubernetes 默认调度器调度策略概述
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" target="_self">
         <div>
           Kubernetes 默认调度器调度策略概述在上一篇文章Kubernetes Scheduler 概述 中有讲述 Kubernetes scheduler 的工作原理和架构，其中有讲述到 kube-scheduler 的核心就是通过调度算法（预选算法和优选算法）来选出合适的节点供 pod 节点使用。本篇文章主要介绍汇总下 Kubernetes 默认调度器中使用到的 Predicates(预选算法)
         </div>
@@ -442,13 +475,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" target="_self">
+        <a href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" target="_self">
           Kubernetes Scheduler 概述
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" target="_self">
         <div>
           Kubernetes Scheduler 概述调度器的主要职责是负责整个集群资源的调度功能，根据特定的调度算法和策略，将业务调度到最优的工作节点上去，达到更加合理、更加充分利用集群资源的目的。而 Kubernetes 中的默认调度器（default-scheduler）是 kube-scheduler，其主要职责就是为一个新创建出来的 Pod，寻找一个最合适的节点（Node）。其主要思想可简单表述
         </div>
@@ -514,13 +547,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" target="_self">
+        <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" target="_self">
           client-go Informer 机制源码剖析（二）
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/06/client-go-informer-informer-v1-22-02/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" target="_self">
         <div>
           client-go informer 机制源码剖析（二）之 sharedIndexInformer 具体实现 本文档基于 v1.22 版本  1. Informer 机制回顾我们在 client-go informer 机制源码剖析（一） 中已经简单介绍了 informer 的使用方式以及其相关结构。如下简单回顾一下 informer 的创建过程： 1NewSharedInformerFactor
         </div>
@@ -584,13 +617,13 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" target="_self">
+        <a href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" target="_self">
           client-go Informer 机制源码剖析（一）
         </a>
       </h1>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/01/client-go-informer-informer-v1-22-01/" target="_self">
+      <a class="index-excerpt index-excerpt__noimg" href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" target="_self">
         <div>
           client-go informer 机制源码剖析（一）之 Informer 机制简介 本文档基于 v1.22 版本  1. 什么是 informerinformer 是 client-go 中重要的组件，在 kubernetes 的各个控制器中以及自定义 CRD 的控制器中有着广泛的应用，其主要用途是通过 ListWatch 机制从 K8S APIService 中获取资源信息，并将资源信息实时
         </div>

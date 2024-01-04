@@ -19,27 +19,27 @@
     <meta name="description" content="Kubernetes 弹性伸缩之 HPA 原理详解本文基于 kubernetes 1.23 版本源码进行分析。 1. 前言Kubernetes 弹性伸缩机制的主要目的是解决资源与业务负载之间供需平衡的问题。当随着业务的实际使用逐渐增大时，其对资源的需求也将逐渐变得更多，这时就需要对集群和业务增加资源以满足需求，即扩容；而当随着业务结束后，其所需要的资源将变得很少，此时为了不浪费资源就需要将集群或业">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kubernetes 弹性伸缩之 HPA 原理详解">
-<meta property="og:url" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/index.html">
+<meta property="og:url" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="Kubernetes 弹性伸缩之 HPA 原理详解本文基于 kubernetes 1.23 版本源码进行分析。 1. 前言Kubernetes 弹性伸缩机制的主要目的是解决资源与业务负载之间供需平衡的问题。当随着业务的实际使用逐渐增大时，其对资源的需求也将逐渐变得更多，这时就需要对集群和业务增加资源以满足需求，即扩容；而当随着业务结束后，其所需要的资源将变得很少，此时为了不浪费资源就需要将集群或业">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-k8sapiserver.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-metrics-server.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-behavior.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-autoscale01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-desiredresplicas.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-autoscale02.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-autoscale03.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-behavior01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa-behavior02.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-k8sapiserver.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-metrics-server.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-desiredresplicas.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale02.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale03.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior01.png">
+<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior02.png">
 <meta property="article:published_time" content="2022-01-18T12:59:32.000Z">
 <meta property="article:modified_time" content="2024-01-03T10:28:34.996Z">
 <meta property="article:author" content="qingwei">
 <meta property="article:tag" content="kubernetes">
 <meta property="article:tag" content="hpa">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/hpa.png">
+<meta name="twitter:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -335,7 +335,7 @@
     
       
       
-        <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
+        <a href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">client-go Informer 机制源码剖析（一）</span>
@@ -344,7 +344,7 @@
     
       
       
-        <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
+        <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">client-go Informer 机制源码剖析（二）</span>
@@ -381,7 +381,7 @@
     
       
       
-        <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
+        <a href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">Kubernetes 弹性伸缩之 HPA 原理详解</span>
@@ -418,7 +418,7 @@
     
       
       
-        <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
+        <a href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes Scheduler 概述</span>
@@ -427,7 +427,7 @@
     
       
       
-        <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
+        <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
@@ -495,7 +495,7 @@
 <li><strong>自动扩缩容：</strong> hpa 控制器通过 k8s apiserver 暴露出来的 api 接口获取到监控指标数据并计算出期望副本数，同时 hpa 控制器还会通过一系列算法和约束条件调整期望副本数，保证 hpa 扩缩容的稳定性。hpa 在得到期望副本数后会修改关联对象（如 deployment）子资源的 scale 副本数，然后通过关联对象（如 deployment）来实现对 pod 的自动扩缩容。</li>
 </ul>
 <p>其主要架构如下图所示:</p>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa.png" srcset="/img/loading.gif" lazyload alt="hpa"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png" srcset="/img/loading.gif" lazyload alt="hpa"></p>
 <p>如上图可知，其主要组件包括 hpa controller（核心组件）, scaleTargetRef, apiserver， custom metrics server（核心组件）, prometheus-server, prometheus-adapter 等。</p>
 <h3 id="2-1-hpa-controller"><a href="#2-1-hpa-controller" class="headerlink" title="2.1. hpa controller"></a>2.1. hpa controller</h3><p><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L573">hpa controller</a> 主要处理 hpa 对象的业务逻辑，hpa 控制器会定期（可在 kube-controller-manager 通过 –horizontal-pod-autoscaler-sync-period 配置，默认 15s）reconcile 每个 HPA对像，通过定期检查业务的监控指标来触发扩缩容操作。reconcile 逻辑主要是：</p>
 <ul>
@@ -505,7 +505,7 @@
 </ul>
 <h3 id="2-2-scaleTargetRef"><a href="#2-2-scaleTargetRef" class="headerlink" title="2.2. scaleTargetRef"></a>2.2. scaleTargetRef</h3><p>可理解为 hpa 的扩缩容操作对象，hpa 会通过 scaleTargetRef 所指定的资源对象（必须支持 scale 接口）来实现对 pod 的扩缩容操作。scaleTargetRef 目前支持的对象： Deployment，StatefulSet, ReplicatSet。</p>
 <h3 id="2-3-apiserver"><a href="#2-3-apiserver" class="headerlink" title="2.3. apiserver"></a>2.3. apiserver</h3><p>是 k8s 的 apiserver，这里主要是指 kube aggregator server，即通过 k8s apiserver 的扩展机制 hpa 的 http 请求将通过 aggregator server 转发到真正的 metrics server 后端进行处理。同时 hpa controller 也会通过 list-watch 机制与 apiserver 建立联系，不断从 apiserver 中获取 metrics 监控指标来 reconcile hpa 对象。如下图所示：</p>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-k8sapiserver.png" srcset="/img/loading.gif" lazyload alt="apiserver"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-k8sapiserver.png" srcset="/img/loading.gif" lazyload alt="apiserver"></p>
 <h3 id="2-4-custom-metrics-server"><a href="#2-4-custom-metrics-server" class="headerlink" title="2.4. custom metrics server"></a>2.4. custom metrics server</h3><p>server 是真正采集/聚合 metrics 指标的服务器，通常会在 k8s 中启动一个 pod 来提供服务，也可以自定义 metrics 服务器（只需实现 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/metrics">标准的 metrics API 接口</a> 即可）。目前 k8s 支持三种类型的 server(括号中为 k8s中对应的 api接口)： metrcis-server(metrics.k8s.io), custom metrcis server(custom.metrics.k8s.io), external metrics server(external.metrics.k8s.io)。</p>
 <ul>
 <li><strong>metrcis server:</strong><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/#metrics-server">metrics server</a> 是实现 metrics API 接口的服务端，它通过 k8s 的 kubelet API 接口从 pod/node 中获取数据； 同时 metrics server 需要注册到 k8s apiserver 中，并通过 API Aggregation 聚合层来向外部提供各种数据的查询服务（kubectl top 以及 HPA/VPA 都是通过），其实现示意图如下所示。使用 metrics server 时需要注意：<ul>
@@ -514,7 +514,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-metrics-server.png" srcset="/img/loading.gif" lazyload alt="metrics-server"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-metrics-server.png" srcset="/img/loading.gif" lazyload alt="metrics-server"></p>
 <ul>
 <li><p><strong>custom/external metrics server:</strong><br>为了适应更灵活的需求，metrics API开始扩展支持用户自定义metrics指标（custom metrics），自定义数据采集/聚合则需要用户自行开发custom metrics server，社区有提供专门的 custom adpater 框架 <a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/custom-metrics-apiserver">custom-metrics-apiserver</a> ，该框架定义了 Custom 和 External 的 MetricsProvider 接口（如下所示），用户只需要实现对应的接口，即可实现用户自定义的 metrics server。</p>
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs reasonml"><span class="hljs-keyword">type</span> MetricsProvider interface &#123;<br>    CustomMetricsProvider<br>    ExternalMetricsProvider<br>&#125;<br><br><span class="hljs-keyword">type</span> CustomMetricsProvider interface &#123;<br>    <span class="hljs-comment">// GetMetricByName fetches a particular metric for a particular object.</span><br>    <span class="hljs-comment">// The namespace will be empty if the metric is root-scoped.</span><br>    <span class="hljs-constructor">GetMetricByName(<span class="hljs-params">name</span> <span class="hljs-params">types</span>.NamespacedName, <span class="hljs-params">info</span> CustomMetricInfo, <span class="hljs-params">metricSelector</span> <span class="hljs-params">labels</span>.Selector)</span> (*custom_metrics.MetricValue, error)<br><br>    <span class="hljs-comment">// GetMetricBySelector fetches a particular metric for a set of objects matching</span><br>    <span class="hljs-comment">// the given label selector.  The namespace will be empty if the metric is root-scoped.</span><br>    <span class="hljs-constructor">GetMetricBySelector(<span class="hljs-params">namespace</span> <span class="hljs-params">string</span>, <span class="hljs-params">selector</span> <span class="hljs-params">labels</span>.Selector, <span class="hljs-params">info</span> CustomMetricInfo, <span class="hljs-params">metricSelector</span> <span class="hljs-params">labels</span>.Selector)</span> (*custom_metrics.MetricValueList, error)<br><br>    <span class="hljs-comment">// ListAllMetrics provides a list of all available metrics at</span><br>    <span class="hljs-comment">// the current time.  Note that this is not allowed to return</span><br>    <span class="hljs-comment">// an error, so it is reccomended that implementors cache and</span><br>    <span class="hljs-comment">// periodically update this list, instead of querying every time.</span><br>    <span class="hljs-constructor">ListAllMetrics()</span> <span class="hljs-literal">[]</span>CustomMetricInfo<br>&#125;<br><br><span class="hljs-keyword">type</span> ExternalMetricsProvider interface &#123;<br>    <span class="hljs-constructor">GetExternalMetric(<span class="hljs-params">namespace</span> <span class="hljs-params">string</span>, <span class="hljs-params">metricSelector</span> <span class="hljs-params">labels</span>.Selector, <span class="hljs-params">info</span> ExternalMetricInfo)</span> (*external_metrics.ExternalMetricValueList, error)<br><br>    <span class="hljs-constructor">ListAllExternalMetrics()</span> <span class="hljs-literal">[]</span>ExternalMetricInfo<br>&#125;<br></code></pre></td></tr></table></figure>
@@ -606,7 +606,7 @@
 <p><strong>注意：</strong> 如果HPA spec里不配置任何metrics，k8s会默认设置 Resource类型的 CPU指标，目标类型是 AverageUtilization，value为80%。</p>
 </li>
 <li><p><strong>Behavior：</strong> behavior 在 autoscaling/v2beta2 和 autoscaling/v2 中定义，用来精确控制 hpa 扩缩容的速率，遵循 “<strong>快速扩容，谨慎缩容</strong>“ 的思想，尽量保证线上服务的可靠性。其数据结构定义可参考<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/staging/src/k8s.io/api/autoscaling/v2/types.go#L139">github</a>，其结构关系可用如下思维导航图表述：</p>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-behavior.png" srcset="/img/loading.gif" lazyload alt="behavior"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior.png" srcset="/img/loading.gif" lazyload alt="behavior"></p>
 <p>从 behavior 结构定义中可知，主要包括：scaleDown:(缩容速度策略) 和 scaleUp(扩容速度策略) 两个策略，每个扩缩容策略的规则主要包含 StabilizationWindowSeconds（稳定窗口）、SelectPolicy（策略选择）、Policies（扩缩容策略定义）三个字段。</p>
 <table>
 <thead>
@@ -635,7 +635,7 @@
 </ul>
 <h2 id="4-HPA-算法详解"><a href="#4-HPA-算法详解" class="headerlink" title="4. HPA 算法详解"></a>4. HPA 算法详解</h2><p>HPA 扩缩容算法主要在 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L573">HPA 控制器</a>里面实现，其中比较重要的算法主要有：1. 如何从 metrics 获取指标并计算得到期望副本数。2. 如何计算出的副本值进行约束（规范化），避免 metrics 中的数据异常导致扩缩容异常。3. 如何通过 behavior 方式控制扩缩容的速率，保证扩缩容的稳定性。下面先看看 hpa controller 的主要逻辑是如何实现的。</p>
 <h3 id="4-1-HPA-扩缩容主流程"><a href="#4-1-HPA-扩缩容主流程" class="headerlink" title="4.1. HPA 扩缩容主流程"></a>4.1. HPA 扩缩容主流程</h3><p>HPA controller 会定期（可在 kube-controller-manager 通过 –horizontal-pod-autoscaler-sync-period 配置，默认 15s）通过list-watch 机制从 apiserver 中 watch 到 hpa 对象并不断调协每个 HPA 对像使其达到期望值，hpa controller 的主要逻辑是如何通过一定的算法计算出期望值，然后再调用 ScaleTargetRef 的 scale 子资源接口间接对 pod 进行扩缩容操作。从源码中可知 hpa controller 的主要逻辑如下图所：</p>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-autoscale01.png" srcset="/img/loading.gif" lazyload alt="autoscale01"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale01.png" srcset="/img/loading.gif" lazyload alt="autoscale01"></p>
 <p>从上图可知，hpa controller 的主要流程如下：</p>
 <ul>
 <li>首先通过 scaleTargetRef 从 scheme 中获取到关联对象的 GVK/GVR 等资源，并通过 resources 获取到子资源 scale。并将子资源的replicas 计为当前 hpa 的 currentReplicas。</li>
@@ -657,7 +657,7 @@
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">说明：这里对各种 metrics 的具体实现暂不做分析，后期有时间会专门研究另作一篇文章。<br></code></pre></td></tr></table></figure>
 
 <h3 id="4-3-扩缩容副本数规范化（desiredReplicas-约束）"><a href="#4-3-扩缩容副本数规范化（desiredReplicas-约束）" class="headerlink" title="4.3. 扩缩容副本数规范化（desiredReplicas 约束）"></a>4.3. 扩缩容副本数规范化（desiredReplicas 约束）</h3><p>扩缩容副本数规范化是指对从 metrics 指标中计算出的 desiredReplicas 进行规范约束，即将 desiredReplicas 的值设置在 hpa 定义的合理范围内，避免 metrics 指标异常导致计算的副本数异常，可在一定范围内保证服务的稳定性。对 desiredReplicas 值的规范约束可用如下图表示：</p>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-desiredresplicas.png" srcset="/img/loading.gif" lazyload alt="desiredReplicas"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-desiredresplicas.png" srcset="/img/loading.gif" lazyload alt="desiredReplicas"></p>
 <p>其中 hapMaxReplicas、hapMinReplicas(没有指定时默认为1) 是指 hpa 对象能扩缩容的最上、下限，分别对应 hpa spec 中的 MaxReplicas,、MinReplicas。maximumAllowedReplicas、minimumAllowedReplicas 分别表示 hpa 对象扩缩容经过一系列约束（包含稳定窗口约束、behavior 扩缩容速率约束等）后被允许达到的最大值、最小值， maximumAllowedReplicas 的取值必须在 [minimumAllowedReplicas, hapMaxReplicas] 范围内; minimumAllowedReplicas 的取值必须在 [hapMinReplicas, maximumAllowedReplicas] 范围内。desiredReplicas 是扩缩容的期望副本数，其取值范围在[minimumAllowedReplicas, maximumAllowedReplicas] 内。</p>
 <p>在 hpa controller 逻辑里主要有两个函数实现了 desiredReplicas 规范化：<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L728">normalizeDesiredReplicas</a> 和 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L763">normalizeDesiredReplicasWithBehaviors</a> 函数。</p>
 <ul>
@@ -667,7 +667,7 @@
 <li>计算扩容副本约束值，max(2<em>currentReplicas,4)，即单次扩容的副本数不能超过当前的2倍（而如果原副本数小于2，则可以一次性*<em>扩容到</em></em> 4个副本）。其目的是避免 metrics 中计算的副本数变化倍数太大时 hpa 一次性扩容太多而将集群中的资源消耗殆尽。</li>
 <li>通过约束值对 desiredReplicas 进行合理求值。</li>
 </ul>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-autoscale02.png" srcset="/img/loading.gif" lazyload alt="autoscale02"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale02.png" srcset="/img/loading.gif" lazyload alt="autoscale02"></p>
 </li>
 <li><p><strong>normalizeDesiredReplicasWithBehaviors:</strong> <code>behavior 字段非空时</code> 通过 behavior 字段中设置的值来约束副本数，即对副本数进行规范化处理，主要也包含下面三个处理流程。如下图所示：</p>
 <ul>
@@ -678,7 +678,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-autoscale03.png" srcset="/img/loading.gif" lazyload alt="autoscale03"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale03.png" srcset="/img/loading.gif" lazyload alt="autoscale03"></p>
 </li>
 </ul>
 <p>综上可知：hpa controller 的 desiredReplicas 规范化约束包含两种模式：一种适应于旧版本（如 autoscaling/v1），一种是添加 behavior 字段的 autoscaling/v2bet2 以上版本中使用。从源代码的角度可知，behavior 字段包含了 StabilizationWindowSeconds、SelectPolicy、Policies 字段，实现了更为精细的扩缩容控制。</p>
@@ -691,7 +691,7 @@
 </li>
 </ul>
 <h4 id="4-4-2-稳定窗口机制"><a href="#4-4-2-稳定窗口机制" class="headerlink" title="4.4.2. 稳定窗口机制"></a>4.4.2. 稳定窗口机制</h4><p>稳定窗口机制在<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L705">早期</a>是只有缩容时才有的机制（缩容冷却机制 downscaleStabilisationWindow），即在缩容时会通过一个滑动窗口来记录最近计算的副本数，并选择<strong>最大值</strong>作为目标期望副本数，且该滑动窗口可以通过参数在 horizontal-pod-autoscaler-downscale-stabilization 来修改，扩容使用固定速率：max(2*currentReplicas, 4)。但随着 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L870">autoscaling/v2bet2 版本</a>添加 behavior 字段后，使扩缩容做到更精确更细致的控制，通过 StabilizationWindowSeconds 字段对扩容和缩容实现了稳定窗口机制，对于<strong>扩容</strong>会选择窗口内的所有记录中的<strong>最小值</strong>作为候选 desiredReplicas，对于<strong>缩容</strong>会选择窗口内的所有记录中的<strong>最大值</strong>作为候选 desiredReplicas。扩容选择最小值缩容选择最大值都是为保证在一次扩缩容时使得变化量最少，可最大程度保证服务的稳定性。如下图所示：</p>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-behavior01.png" srcset="/img/loading.gif" lazyload alt="behavior01"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior01.png" srcset="/img/loading.gif" lazyload alt="behavior01"></p>
 <h4 id="4-4-3-扩缩容速率控制"><a href="#4-4-3-扩缩容速率控制" class="headerlink" title="4.4.3. 扩缩容速率控制"></a>4.4.3. 扩缩容速率控制</h4><p>在 HPA controller里默认扩缩容总原则是：<strong>快速扩容，谨慎缩容</strong>。早期版本，扩容是使用固定速率：max(2*currentReplicas, 4)来进行扩容；缩容仅仅只是通过设置一个集群全局的窗口时间（downscaleStabilisationWindow）来约束，窗口期过后也就失去控制能力。但 autoscaling/v2bet2 版本后对扩缩容速率做了更多细致化的优化，即会通过 behavior 字段进行约束（StabilizationWindowSeconds + SelectPolicy + Policies）。下面主要讲述 autoscaling/v2bet2 下基于 bahavior 方式来控制扩缩容的速率。具体看如下图所示：</p>
 <ul>
 <li><p>behavior 中的 StabilizationWindowSeconds 用来实现滑动窗口机制，在扩容/缩容时都可以配置滑动窗口的时间来更细粒度的控制扩/缩容的速率，在计算滑动窗口的推荐值时，扩容会选则滑动窗口期内的所有记录的最小值作为推荐值，缩容会选择滑动窗口期内的所有记录的最大值作为推荐值。<strong>注意：</strong> 缩容时，如果 ScaleDown 策略中的 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/blob/release-1.23/pkg/controller/podautoscaler/horizontal.go#L791">behavior 非空并且 StabilizationWindowSeconds 没有设置</a>时，hpa 会使用默认的 downscaleStabilisationWindow 窗口来限制缩容的速率。</p>
@@ -704,7 +704,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="/2022/01/18/hpa-2022-01-18-hpa/hpa-behavior02.png" srcset="/img/loading.gif" lazyload alt="behavior02"></p>
+<p><img src="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior02.png" srcset="/img/loading.gif" lazyload alt="behavior02"></p>
 <h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h2><p>本文首先从架构设计的角度进行分析，对 hpa 的各个组件的功能和设计上进行了简单描述，从整体上了解到 hpa 工作原理，简述如下：hpa controller 通过 apiserver 从 metrics-server 中获取监控指标，并通过一定的算法来计算出期望的副本数，随后 hpa controller 会调用 hpa 对象所关联对象的 scale 接口实现对 pod 的扩缩容操作；而监控指标的获取是 metrics-server 调用 kubelet 提供的 api 接口从容器中获取的。由此可简单的根据 pod cpu 指标的变化情况实现 hpa 对pod 的扩缩容操作；但为了满足复杂的业务场景，hpa 也支持用户通过自定义指标来实现自动扩缩容操作，目前用户可通过 custom.metrics.k8s.io 和 external.metrics.k8s.io 两个接口实现自定义 api 接口的扩展，但是相应的需要自己实现类似 metrics-server 的 server 功能，实现对指标的采集和聚合操作并向外提供api查询服务，由此社区也提供了 prometheus + prometheus-adapter 的方案。</p>
 <p>随后本文从源码角度剖析了 hpa 的实现原理，先是简单介绍了 hpa 多个版本的区别，之后通过分析 hpa 对象的字段结构、yaml文件配置等了解到如何使用 hpa 的。hpa 对象的 spec 字段主要包括 ScaleTargetRef、MaxReplicas、MinReplicas、Metrics、Behavior 五个字段，其中 ScaleTargetRef 和 MaxReplicas 是必选字段，其他三个是可选字段。</p>
 <ul>
@@ -779,7 +779,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Kubernetes 弹性伸缩之 HPA 原理详解</div>
-      <div>https://qingwei9.github.io/2022/01/18/hpa-2022-01-18-hpa/</div>
+      <div>https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/</div>
     </div>
     <div class="license-meta">
       
@@ -821,11 +821,17 @@
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/2024/01/04/kubeadm-2024-01-04-kubeadm/" title="kubeadm">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">kubeadm</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/11/20/knative-summary-2021-11-20-knative-summary/" title="knative serving 概述">
+                      <a href="/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/" title="knative serving 概述">
                         <span class="hidden-mobile">knative serving 概述</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
@@ -847,7 +853,7 @@
         var options = Object.assign(
           {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
           {
-            id: '0d01da35fbb6d5ca82b966660d4b804a'
+            id: '7cde148c91f2191ea6cdc28b5997e892'
           }
         )
         var gitalk = new Gitalk(options);

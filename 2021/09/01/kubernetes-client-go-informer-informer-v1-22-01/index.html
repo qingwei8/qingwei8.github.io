@@ -19,7 +19,7 @@
     <meta name="description" content="client-go informer 机制源码剖析（一）之 Informer 机制简介 本文档基于 v1.22 版本  1. 什么是 informerinformer 是 client-go 中重要的组件，在 kubernetes 的各个控制器中以及自定义 CRD 的控制器中有着广泛的应用，其主要用途是通过 ListWatch 机制从 K8S APIService 中获取资源信息，并将资源信息实时">
 <meta property="og:type" content="article">
 <meta property="og:title" content="client-go Informer 机制源码剖析（一）">
-<meta property="og:url" content="https://qingwei9.github.io/2021/09/01/client-go-informer-informer-v1-22-01/index.html">
+<meta property="og:url" content="https://qingwei9.github.io/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="client-go informer 机制源码剖析（一）之 Informer 机制简介 本文档基于 v1.22 版本  1. 什么是 informerinformer 是 client-go 中重要的组件，在 kubernetes 的各个控制器中以及自定义 CRD 的控制器中有着广泛的应用，其主要用途是通过 ListWatch 机制从 K8S APIService 中获取资源信息，并将资源信息实时">
 <meta property="og:locale" content="zh_CN">
@@ -324,7 +324,7 @@
     
       
       
-        <a href="/2021/09/01/client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
+        <a href="/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/" title="client-go Informer 机制源码剖析（一）"
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">client-go Informer 机制源码剖析（一）</span>
@@ -333,7 +333,7 @@
     
       
       
-        <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
+        <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">client-go Informer 机制源码剖析（二）</span>
@@ -370,7 +370,7 @@
     
       
       
-        <a href="/2022/01/18/hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
+        <a href="/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/" title="Kubernetes 弹性伸缩之 HPA 原理详解"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 弹性伸缩之 HPA 原理详解</span>
@@ -407,7 +407,7 @@
     
       
       
-        <a href="/2021/10/20/kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
+        <a href="/2021/10/20/kubernetes-kube-scheduler-summary-2021-10-20-scheduler-summary/" title="Kubernetes Scheduler 概述"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes Scheduler 概述</span>
@@ -416,7 +416,7 @@
     
       
       
-        <a href="/2021/10/28/kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
+        <a href="/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/" title="Kubernetes 默认调度器调度策略概述"
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
@@ -585,7 +585,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>client-go Informer 机制源码剖析（一）</div>
-      <div>https://qingwei9.github.io/2021/09/01/client-go-informer-informer-v1-22-01/</div>
+      <div>https://qingwei9.github.io/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/</div>
     </div>
     <div class="license-meta">
       
@@ -627,7 +627,7 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/09/06/client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）">
+                      <a href="/2021/09/06/kubernetes-client-go-informer-informer-v1-22-02/" title="client-go Informer 机制源码剖析（二）">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">client-go Informer 机制源码剖析（二）</span>
                         <span class="visible-mobile">上一篇</span>
@@ -659,7 +659,7 @@
         var options = Object.assign(
           {"clientID":"31393b32c251ab1fe030","clientSecret":"62148b525fca05b9ba8056292b9aa50197457a2c","repo":"qingwei8.github.io","owner":"qingwei8","admin":["qingwei8"],"language":"zh-CN","labels":["Gitalk"],"perPage":10,"pagerDirection":"last","distractionFreeMode":false,"createIssueManually":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","enable":true},
           {
-            id: '36eb3500c90ded478b7653dc462ae684'
+            id: 'f7e22acddb92b463994a4f5341db17e1'
           }
         )
         var gitalk = new Gitalk(options);
