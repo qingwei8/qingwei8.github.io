@@ -19,23 +19,23 @@
     <meta name="description" content="knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部">
 <meta property="og:type" content="article">
 <meta property="og:title" content="knative serving 概述">
-<meta property="og:url" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/index.html">
+<meta property="og:url" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="knative serving 概述1. 前言KNative是谷歌开源的 serverless 架构方案，旨在提供一套简单易用的 serverless 方案，把 serverless 标准化。目前参与的公司主要是 Google、Pivotal、IBM、Red Hat，2018年7月24日对外发布，目前还处于快速发展的阶段。knative 是为了解决以容器为核心的serverless 应用的构建、部">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-sumaary02.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-resources01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-scaling01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-from-0.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-up-down.png">
-<meta property="og:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-to-0.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-sumaary02.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-resources01.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-scaling01.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-from-0.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-up-down.png">
+<meta property="og:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/scale-to-0.png">
 <meta property="article:published_time" content="2021-11-20T11:01:29.000Z">
 <meta property="article:modified_time" content="2024-01-03T10:15:05.025Z">
 <meta property="article:author" content="qingwei">
 <meta property="article:tag" content="knative">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png">
+<meta name="twitter:image" content="https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/knative-summary01.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -79,7 +79,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"qingwei8.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -532,7 +532,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>knative serving 概述</div>
-      <div>https://qingwei9.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/</div>
+      <div>https://qingwei8.github.io/2021/11/20/serverless-knative-summary-2021-11-20-knative-summary/</div>
     </div>
     <div class="license-meta">
       

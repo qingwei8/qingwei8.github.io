@@ -19,7 +19,7 @@
     <meta name="description" content="client-go informer 机制源码剖析（一）之 Informer 机制简介 本文档基于 v1.22 版本  1. 什么是 informerinformer 是 client-go 中重要的组件，在 kubernetes 的各个控制器中以及自定义 CRD 的控制器中有着广泛的应用，其主要用途是通过 ListWatch 机制从 K8S APIService 中获取资源信息，并将资源信息实时">
 <meta property="og:type" content="article">
 <meta property="og:title" content="client-go Informer 机制源码剖析（一）">
-<meta property="og:url" content="https://qingwei9.github.io/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/index.html">
+<meta property="og:url" content="https://qingwei8.github.io/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="client-go informer 机制源码剖析（一）之 Informer 机制简介 本文档基于 v1.22 版本  1. 什么是 informerinformer 是 client-go 中重要的组件，在 kubernetes 的各个控制器中以及自定义 CRD 的控制器中有着广泛的应用，其主要用途是通过 ListWatch 机制从 K8S APIService 中获取资源信息，并将资源信息实时">
 <meta property="og:locale" content="zh_CN">
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"qingwei8.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -283,7 +283,7 @@
         aria-expanded="true"
       >
         kubernetes
-        <span class="list-group-count">(5)</span>
+        <span class="list-group-count">(6)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -420,6 +420,43 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div class="category-sub row nomargin-x">
+      <a class="category-subitem collapsed
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="kubeadm"
+        id="heading-739b745833fbc0b36022a8c61e5a2825" role="tab" data-toggle="collapse" href="#collapse-739b745833fbc0b36022a8c61e5a2825"
+        aria-expanded="false"
+      >
+        kubeadm
+        <span class="list-group-count">(1)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse " id="collapse-739b745833fbc0b36022a8c61e5a2825"
+           role="tabpanel" aria-labelledby="heading-739b745833fbc0b36022a8c61e5a2825">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/01/05/cloud-native-k8s-install-kubeadm-2024-01-05-kubeadm/" title="使用 kubeadm 安装 kubernetes 集群"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">使用 kubeadm 安装 kubernetes 集群</span>
         </a>
       
     
@@ -585,7 +622,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>client-go Informer 机制源码剖析（一）</div>
-      <div>https://qingwei9.github.io/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/</div>
+      <div>https://qingwei8.github.io/2021/09/01/kubernetes-client-go-informer-informer-v1-22-01/</div>
     </div>
     <div class="license-meta">
       

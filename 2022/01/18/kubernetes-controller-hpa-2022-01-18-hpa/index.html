@@ -19,27 +19,27 @@
     <meta name="description" content="Kubernetes 弹性伸缩之 HPA 原理详解本文基于 kubernetes 1.23 版本源码进行分析。 1. 前言Kubernetes 弹性伸缩机制的主要目的是解决资源与业务负载之间供需平衡的问题。当随着业务的实际使用逐渐增大时，其对资源的需求也将逐渐变得更多，这时就需要对集群和业务增加资源以满足需求，即扩容；而当随着业务结束后，其所需要的资源将变得很少，此时为了不浪费资源就需要将集群或业">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kubernetes 弹性伸缩之 HPA 原理详解">
-<meta property="og:url" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/index.html">
+<meta property="og:url" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="Kubernetes 弹性伸缩之 HPA 原理详解本文基于 kubernetes 1.23 版本源码进行分析。 1. 前言Kubernetes 弹性伸缩机制的主要目的是解决资源与业务负载之间供需平衡的问题。当随着业务的实际使用逐渐增大时，其对资源的需求也将逐渐变得更多，这时就需要对集群和业务增加资源以满足需求，即扩容；而当随着业务结束后，其所需要的资源将变得很少，此时为了不浪费资源就需要将集群或业">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-k8sapiserver.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-metrics-server.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-desiredresplicas.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale02.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale03.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior01.png">
-<meta property="og:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior02.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-k8sapiserver.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-metrics-server.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale01.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-desiredresplicas.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale02.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-autoscale03.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior01.png">
+<meta property="og:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa-behavior02.png">
 <meta property="article:published_time" content="2022-01-18T12:59:32.000Z">
 <meta property="article:modified_time" content="2024-01-04T02:52:38.754Z">
 <meta property="article:author" content="qingwei">
 <meta property="article:tag" content="kubernetes">
 <meta property="article:tag" content="hpa">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png">
+<meta name="twitter:image" content="https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/hpa.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -83,7 +83,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"qingwei8.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -294,7 +294,7 @@
         aria-expanded="true"
       >
         kubernetes
-        <span class="list-group-count">(5)</span>
+        <span class="list-group-count">(6)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -431,6 +431,43 @@
            class="list-group-item list-group-item-action
            ">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div class="category-sub row nomargin-x">
+      <a class="category-subitem collapsed
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="kubeadm"
+        id="heading-739b745833fbc0b36022a8c61e5a2825" role="tab" data-toggle="collapse" href="#collapse-739b745833fbc0b36022a8c61e5a2825"
+        aria-expanded="false"
+      >
+        kubeadm
+        <span class="list-group-count">(1)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse " id="collapse-739b745833fbc0b36022a8c61e5a2825"
+           role="tabpanel" aria-labelledby="heading-739b745833fbc0b36022a8c61e5a2825">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/01/05/cloud-native-k8s-install-kubeadm-2024-01-05-kubeadm/" title="使用 kubeadm 安装 kubernetes 集群"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">使用 kubeadm 安装 kubernetes 集群</span>
         </a>
       
     
@@ -779,7 +816,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Kubernetes 弹性伸缩之 HPA 原理详解</div>
-      <div>https://qingwei9.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/</div>
+      <div>https://qingwei8.github.io/2022/01/18/kubernetes-controller-hpa-2022-01-18-hpa/</div>
     </div>
     <div class="license-meta">
       

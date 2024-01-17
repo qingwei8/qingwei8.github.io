@@ -19,15 +19,15 @@
     <meta name="description" content="Kubernetes 默认调度器调度策略概述在上一篇文章Kubernetes Scheduler 概述 中有讲述 Kubernetes scheduler 的工作原理和架构，其中有讲述到 kube-scheduler 的核心就是通过调度算法（预选算法和优选算法）来选出合适的节点供 pod 节点使用。本篇文章主要介绍汇总下 Kubernetes 默认调度器中使用到的 Predicates(预选算法)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kubernetes 默认调度器调度策略概述">
-<meta property="og:url" content="https://qingwei9.github.io/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/index.html">
+<meta property="og:url" content="https://qingwei8.github.io/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/index.html">
 <meta property="og:site_name" content="Qingwei的博客">
 <meta property="og:description" content="Kubernetes 默认调度器调度策略概述在上一篇文章Kubernetes Scheduler 概述 中有讲述 Kubernetes scheduler 的工作原理和架构，其中有讲述到 kube-scheduler 的核心就是通过调度算法（预选算法和优选算法）来选出合适的节点供 pod 节点使用。本篇文章主要介绍汇总下 Kubernetes 默认调度器中使用到的 Predicates(预选算法)">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-10-28T12:28:01.000Z">
 <meta property="article:modified_time" content="2024-01-17T06:13:16.889Z">
 <meta property="article:author" content="qingwei">
-<meta property="article:tag" content="scheduler">
 <meta property="article:tag" content="kubernetes">
+<meta property="article:tag" content="scheduler">
 <meta name="twitter:card" content="summary_large_image">
   
   
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"qingwei9.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"qingwei8.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -283,7 +283,7 @@
         aria-expanded="true"
       >
         kubernetes
-        <span class="list-group-count">(5)</span>
+        <span class="list-group-count">(6)</span>
         <i class="iconfont icon-arrowright"></i>
       </a>
       
@@ -420,6 +420,43 @@
            class="list-group-item list-group-item-action
            active">
           <span class="category-post">Kubernetes 默认调度器调度策略概述</span>
+        </a>
+      
+    
+  </div>
+
+        
+      </div>
+    </div>
+  
+    
+    
+    
+    <div class="category-sub row nomargin-x">
+      <a class="category-subitem collapsed
+          list-group-item category-item-action col-10 col-md-11 col-xm-11" title="kubeadm"
+        id="heading-739b745833fbc0b36022a8c61e5a2825" role="tab" data-toggle="collapse" href="#collapse-739b745833fbc0b36022a8c61e5a2825"
+        aria-expanded="false"
+      >
+        kubeadm
+        <span class="list-group-count">(1)</span>
+        <i class="iconfont icon-arrowright"></i>
+      </a>
+      
+      <div class="category-collapse collapse " id="collapse-739b745833fbc0b36022a8c61e5a2825"
+           role="tabpanel" aria-labelledby="heading-739b745833fbc0b36022a8c61e5a2825">
+        
+        
+          
+  <div class="category-post-list">
+    
+    
+      
+      
+        <a href="/2024/01/05/cloud-native-k8s-install-kubeadm-2024-01-05-kubeadm/" title="使用 kubeadm 安装 kubernetes 集群"
+           class="list-group-item list-group-item-action
+           ">
+          <span class="category-post">使用 kubeadm 安装 kubernetes 集群</span>
         </a>
       
     
@@ -668,9 +705,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/scheduler/">#scheduler</a>
-      
         <a href="/tags/kubernetes/">#kubernetes</a>
+      
+        <a href="/tags/scheduler/">#scheduler</a>
       
     </div>
   
@@ -683,7 +720,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Kubernetes 默认调度器调度策略概述</div>
-      <div>https://qingwei9.github.io/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/</div>
+      <div>https://qingwei8.github.io/2021/10/28/kubernetes-kube-scheduler-algorithm-2021-10-28-scheduler-algorithm/</div>
     </div>
     <div class="license-meta">
       
